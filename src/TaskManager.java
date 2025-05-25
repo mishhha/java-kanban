@@ -18,22 +18,16 @@ public class TaskManager {
         return generatorId++;
     }
 
-    public void printTasks () { // Печать всех задач Task
-        for (Task taskValues :tasks.values()) {
-            System.out.println(taskValues);
-        }
+    public ArrayList<Task> printTasks () { // Печать всех задач Task
+        return new ArrayList<>(tasks.values());
     }
 
-    public void printEpics () { // Печать всех задач Epic
-        for (Epic epicValues :epics.values()) {
-            System.out.println(epicValues);
-        }
+    public ArrayList<Epic> printEpics () { // Печать всех задач Epic
+        return new ArrayList<>(epics.values());
     }
 
-    public void printSubtask () { // Печать всех задач SubTask
-        for (SubTask subValues :subtasks.values()) {
-            System.out.println(subValues);
-        }
+    public ArrayList<SubTask> printSubtask () { // Печать всех задач SubTask
+        return new ArrayList<>(subtasks.values());
     }
 
     public void removeTasks () { // Удаление всех задач Task
@@ -42,11 +36,13 @@ public class TaskManager {
 
     public void removeEpic () { // Удаление всех задач Epic
         epics.clear();
+        subtasks.clear();
     }
 
     public void removeSubTask () { // Удаление всех задач SubTask
         subtasks.clear();
         for (Epic epic : epics.values()) {
+            epic.getSubTasks().clear();
             updateEpicStatus(epic);
         }
     }
@@ -64,28 +60,53 @@ public class TaskManager {
     }
 
     public Task createTask(Task task) { // К Task задаче добавили ID и добавили ее по ID в Map, вернули задачу.
+        if (task == null) {
+            System.out.println("Пустой объект");
+            return null;
+        }
+        if (tasks.containsValue(task)) {
+            System.out.println("Такая задача уже существует");
+            return null;
+        }
         task.setId(getNextId());
         tasks.put(task.getId(), task);
         return task;
     }
 
     public Epic createEpic(Epic epic) {
+        if (epic == null) {
+            System.out.println("Пустой объект");
+            return null;
+        }
+        if (epics.containsValue(epic)) {
+            System.out.println("Такой эпик уже существует");
+            return null;
+        }
         epic.setId(getNextId());
         epics.put(epic.getId(), epic);
         return epic;
     }
 
     public SubTask createSubTask(SubTask subTask) {
-        subTask.setId(getNextId());
-        subtasks.put(subTask.getId(), subTask);
-        Epic epic = epics.get(subTask.getEpicId());
-        if (epic != null) {
-            updateEpicStatus(epic);
+        Integer epicId = subTask.getEpicId(); // Получили epicID подзадачи
+        if (!epics.containsKey(epicId)) { // если мапа не содержит такой ключ с таким id, null!
+            return null;
+        }
+        Epic epic = epics.get(subTask.getEpicId()); // Получили Эпик задачу из мапы
+        if (epic != null) { // Если задача из мапы не нулл, то выполняем логику
+            subTask.setId(getNextId()); // Установили ID, сгенерированный
+            epic.getSubTasks().add(subTask.getId()); // Добавили ID в список сабтаскID Epica
+            subtasks.put(subTask.getId(), subTask); // Добавили в мапу
+            updateEpicStatus(epic); // Обновили статус Эпика
         }
         return subTask;
     }
 
     public Task updateTask(Task task) { // Получаем задачу, записываем ее по ID в Map и возвращаем обновленную.
+        Task task1 = tasks.get(task.getId());
+        if (!task1.equals(task)){
+            return null;
+        }
         tasks.put(task.getId(), task);
         return task;
     }
@@ -96,9 +117,9 @@ public class TaskManager {
     }
 
     public SubTask updateSubtask(SubTask subTask) {
-        subtasks.put(subTask.getId(), subTask);
         Epic epic = epics.get(subTask.getEpicId());
         if (epic != null) {
+            subtasks.put(subTask.getId(), subTask);
             updateEpicStatus(epic);
         }
         return subTask;
@@ -108,8 +129,15 @@ public class TaskManager {
         return tasks.remove(id);
     }
 
-    public Epic deleteEpic(Integer id){
-        return epics.remove(id);
+    public Epic deleteEpic(Integer id) {
+        Epic epic = epics.get(id); // Получаем задачу из мап по Id
+        for (SubTask subTask : subtasks.values()) { // Перебираем подзадачи
+            if (id.equals(subTask.getEpicId())) { // Если пришедший id сравним с id подзадачи
+                subtasks.remove(subTask.getId()); // Удаляем
+            }
+        }
+        epics.remove(id); // Удалили эпик задачу
+        return epic;
     }
 
     public SubTask deleteSubtasks(Integer id){
@@ -124,9 +152,14 @@ public class TaskManager {
     }
 
     public ArrayList<SubTask> getSubTasksByEpic(Integer epicId) { // Получение списка всех подзадач определённого эпика.
+        Epic epic = epics.get(epicId);
+        if (epic == null) {
+            return new ArrayList<>();
+        }
         ArrayList<SubTask> result = new ArrayList<>();
-        for (SubTask subTask : subtasks.values()) {
-            if (subTask.getEpicId() != null && subTask.getEpicId().equals(epicId)) {
+        for (Integer subTaskId : epic.getSubTasks()) {
+            SubTask subTask = subtasks.get(subTaskId);
+            if (subTask != null) {
                 result.add(subTask);
             }
         }
