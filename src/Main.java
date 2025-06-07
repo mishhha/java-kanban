@@ -7,6 +7,8 @@ public class Main {
     public static void main(String[] args) {
         InMemoryTaskManager manager = new InMemoryTaskManager();
 
+    // Тесты ФЗ - Спринт 4
+
         // 1. Создаем две обычные задачи
         System.out.println("Создаём задачи про уборку:");
         Task task1 = new Task("Вымыть посуду", "После завтрака", TaskStatus.NEW);
@@ -14,6 +16,7 @@ public class Main {
 
         manager.createTask(task1);
         manager.createTask(task2);
+
 
         System.out.println("Все обычные задачи:");
         manager.printTasks();
@@ -100,5 +103,44 @@ public class Main {
 
         System.out.println("\nПодзадачи:");
         manager.printSubtask();
+        System.out.println();
+
+    // Тесты ФЗ - Спринт 5
+
+        System.out.println("// Тесты ФЗ - Спринт 5");
+        System.out.println();
+
+        System.out.println("Задачи:");
+        System.out.println();
+        for (Task task : manager.printTasks()) {
+            System.out.println(task);
+        }
+
+        System.out.println();
+
+        System.out.println("Эпики:");
+        System.out.println();
+        for (Task epic : manager.printEpics()) {
+            System.out.println(epic);
+
+            for (Task task : manager.getSubTasksByEpic(epic.getId())) {
+                System.out.println("--> " + task);
+            }
+        }
+        System.out.println();
+
+        System.out.println("Подзадачи:");
+        System.out.println();
+        for (Task subtask : manager.printSubtask()) {
+            System.out.println(subtask);
+        }
+        System.out.println();
+
+        System.out.println("История:");
+        System.out.println();
+        for (Task task : manager.getHistory()) {
+            System.out.println(task);
+        }
+
     }
 }
