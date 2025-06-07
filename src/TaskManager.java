@@ -43,6 +43,12 @@ public interface TaskManager {
 
     void removeSubTask(); // Удалить SubTask.
 
+    ArrayList<Task> printTasks();
+
+    ArrayList<Epic> printEpics();
+
+    ArrayList<SubTask> printSubtask();
+
     // Новая функциональность ФЗ - Спринт 5
 
     List<Task> getHistory(); // Сохраняем историю вызова объектов.

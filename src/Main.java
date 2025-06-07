@@ -5,7 +5,7 @@ import tasks.Epic;
 
 public class Main {
     public static void main(String[] args) {
-        InMemoryTaskManager manager = new InMemoryTaskManager();
+        TaskManager manager = Managers.getDefault();
 
     // Тесты ФЗ - Спринт 4
 

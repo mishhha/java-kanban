@@ -15,28 +15,35 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Новая функциональность для ФЗ Спринта 5
 
-    private final List<Task> history = new ArrayList<>(); // Создал поле с историей просмотра
+    private final HistoryManager historyManager;
 
-    @Override
-    public List<Task> getHistory() { // Возвращаю список с историей.
-        return new ArrayList<>(history);
+    public InMemoryTaskManager(HistoryManager historyManager) {
+        this.historyManager = historyManager;
     }
 
     private Integer generatorId = 1; // Объявляем переменную для хранения ID
+
+    @Override
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
+    }
 
     @Override
     public Integer getNextId() { // Метод для генерации след. ID
         return generatorId++;
     }
 
+    @Override
     public ArrayList<Task> printTasks() { // Печать всех задач Task
         return new ArrayList<>(tasks.values());
     }
 
+    @Override
     public ArrayList<Epic> printEpics() { // Печать всех задач Epic
         return new ArrayList<>(epics.values());
     }
 
+    @Override
     public ArrayList<SubTask> printSubtask() { // Печать всех задач SubTask
         return new ArrayList<>(subtasks.values());
     }
@@ -65,10 +72,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Task getByIdTask(Integer id) { // Получить Task по Id
         Task task = tasks.get(id);
         if (task != null) {
-            history.add(0, task);
-            if (history.size()>10) {
-                history.remove(10);
-            }
+            historyManager.add(task);
         }
         return task;
     }
@@ -77,10 +81,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Epic getByIdEpic(Integer id) { // Получить Epic по Id
         Epic epic = epics.get(id);
         if (epic != null) {
-            history.add(0, epic);
-            if (history.size()>10) {
-                history.remove(10);
-            }
+            historyManager.add(epic);
         }
         return epic;
     }
@@ -89,10 +90,7 @@ public class InMemoryTaskManager implements TaskManager {
     public SubTask getByIdSubtask(Integer id) { // Получить Subtask по Id
         SubTask subtask = subtasks.get(id);
         if (subtask != null) {
-            history.add(0, subtask);
-            if (history.size()>10) {
-                history.remove(10);
-            }
+            historyManager.add(subtask);
         }
         return subtask;
     }
