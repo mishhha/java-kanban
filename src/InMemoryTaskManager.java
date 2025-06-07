@@ -5,6 +5,7 @@ import tasks.Epic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -14,10 +15,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Новая функциональность для ФЗ Спринта 5
 
-    private final ArrayList<Task> history = new ArrayList<>(); // Создал поле с историей просмотра
+    private final List<Task> history = new ArrayList<>(); // Создал поле с историей просмотра
 
     @Override
-    public ArrayList<Task> getHistory() { // Возвращаю список с историей.
+    public List<Task> getHistory() { // Возвращаю список с историей.
         return new ArrayList<>(history);
     }
 

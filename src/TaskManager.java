@@ -3,6 +3,7 @@ import tasks.SubTask;
 import tasks.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
 
@@ -44,6 +45,6 @@ public interface TaskManager {
 
     // Новая функциональность ФЗ - Спринт 5
 
-    ArrayList<Task> getHistory(); // Сохраняем историю вызова объектов.
+    List<Task> getHistory(); // Сохраняем историю вызова объектов.
 
 }
