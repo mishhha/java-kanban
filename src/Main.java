@@ -5,7 +5,7 @@ import tasks.Epic;
 
 public class Main {
     public static void main(String[] args) {
-        TaskManager manager = new TaskManager();
+        InMemoryTaskManager manager = new InMemoryTaskManager();
 
         // 1. Создаем две обычные задачи
         System.out.println("Создаём задачи про уборку:");
