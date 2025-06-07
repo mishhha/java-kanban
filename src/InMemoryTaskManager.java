@@ -12,19 +12,13 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Epic> epics = new HashMap<>(); // Хранение Epic задач.
     private final HashMap<Integer, SubTask> subtasks = new HashMap<>(); // Хранение Subtask задач.
 
-    // Новая функциональность
+    // Новая функциональность для ФЗ Спринта 5
 
-    private final ArrayList<Integer> history = new ArrayList<>();
+    private final ArrayList<Task> history = new ArrayList<>(); // Создал поле с историей просмотра
 
     @Override
-    public void getHistory(Integer id) { // Список последних 10 задач.
-        if (id == null) {
-            return;
-        }
-        history.add(0,id);
-        if (history.size()>10) {
-            history.remove(10);
-        }
+    public ArrayList<Task> getHistory() { // Возвращаю список с историей.
+        return new ArrayList<>(history);
     }
 
     private Integer generatorId = 1; // Объявляем переменную для хранения ID
@@ -68,20 +62,38 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getByIdTask(Integer id) { // Получить Task по Id
-        getHistory(id);
-        return tasks.get(id);
+        Task task = tasks.get(id);
+        if (task != null) {
+            history.add(0, task);
+            if (history.size()>10) {
+                history.remove(10);
+            }
+        }
+        return task;
     }
 
     @Override
     public Epic getByIdEpic(Integer id) { // Получить Epic по Id
-        getHistory(id);
-        return epics.get(id);
+        Epic epic = epics.get(id);
+        if (epic != null) {
+            history.add(0, epic);
+            if (history.size()>10) {
+                history.remove(10);
+            }
+        }
+        return epic;
     }
 
     @Override
     public SubTask getByIdSubtask(Integer id) { // Получить Subtask по Id
-        getHistory(id);
-        return subtasks.get(id);
+        SubTask subtask = subtasks.get(id);
+        if (subtask != null) {
+            history.add(0, subtask);
+            if (history.size()>10) {
+                history.remove(10);
+            }
+        }
+        return subtask;
     }
 
     @Override

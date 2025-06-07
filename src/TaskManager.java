@@ -42,8 +42,8 @@ public interface TaskManager {
 
     void removeSubTask(); // Удалить SubTask.
 
-    // Новая функциональность
+    // Новая функциональность ФЗ - Спринт 5
 
-    void getHistory(Integer id);
+    ArrayList<Task> getHistory(); // Сохраняем историю вызова объектов.
 
 }
