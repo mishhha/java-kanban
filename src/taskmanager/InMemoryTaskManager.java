@@ -1,7 +1,7 @@
-import tasks.TaskStatus;
-import tasks.Task;
-import tasks.SubTask;
+package taskmanager;
 import tasks.Epic;
+import tasks.SubTask;
+import tasks.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,5 +1,7 @@
 package tasks;
 
+import taskmanager.TaskStatus;
+
 public class SubTask extends Task {
 
     private Integer epicId;
