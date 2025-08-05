@@ -176,7 +176,7 @@ class EpicTest {
     }
 
     @Test
-    void shouldRemoveAndChangeOldVersionTask(){ // Проверяем, что из истории удаляются задачи.
+    void shouldRemoveAndChangeOldVersionTask() { // Проверяем, что из истории удаляются задачи.
         Task task1 = new Task("Первая задача", "Описание", TaskStatus.NEW);
         Task createTask1 = manager.createTask(task1);
         Task taskFromManager1 = manager.getByIdTask(createTask1.getId()); // добавили в историю
@@ -200,10 +200,5 @@ class EpicTest {
         assertNotEquals(historySizeOld, historySizeNew);
         assertEquals(historySizeOld - 1, historySizeNew);
     }
-
-
-
-
-
 
 }
