@@ -155,6 +155,52 @@ class EpicTest {
         assertEquals("Купить хлеб", oldTask.getName());
     }
 
+    @Test
+    void shouldAddTaskInHistoryInFirst() { // Проверяем метод добавления в начало истории по принципу LIFO
+        Task task1 = new Task("Первая задача", "Описание", TaskStatus.NEW);
+        Task createTask1 = manager.createTask(task1);
+        Task taskFromManager1 = manager.getByIdTask(createTask1.getId()); // добавили в историю
+
+        Task task2 = new Task("Вторая задача", "Описание", TaskStatus.NEW);
+        Task createTask2 = manager.createTask(task2);
+        Task taskFromManager2 = manager.getByIdTask(createTask2.getId()); // добавили в историю
+
+        Task task3 = new Task("Третья задача", "Описание", TaskStatus.NEW);
+        Task createTask3 = manager.createTask(task3);
+        Task taskFromManager3 = manager.getByIdTask(createTask3.getId()); // добавили в историю
+
+        List<Task> history = manager.getHistory();
+        Task oldTask = history.get(0);
+
+        assertEquals("Третья задача", oldTask.getName());
+    }
+
+    @Test
+    void shouldRemoveAndChangeOldVersionTask(){ // Проверяем, что из истории удаляются задачи.
+        Task task1 = new Task("Первая задача", "Описание", TaskStatus.NEW);
+        Task createTask1 = manager.createTask(task1);
+        Task taskFromManager1 = manager.getByIdTask(createTask1.getId()); // добавили в историю
+
+        Task task2 = new Task("Вторая задача", "Описание", TaskStatus.NEW);
+        Task createTask2 = manager.createTask(task2);
+        Task taskFromManager2 = manager.getByIdTask(createTask2.getId()); // добавили в историю
+
+        Task task3 = new Task("Третья задача", "Описание", TaskStatus.NEW);
+        Task createTask3 = manager.createTask(task3);
+        Task taskFromManager3 = manager.getByIdTask(createTask3.getId()); // добавили в историю
+
+        List<Task> historyTasksOld = manager.getHistory();
+        int historySizeOld = historyTasksOld.size();
+
+        manager.deleteTask(taskFromManager3.getId());
+
+        List<Task> historyTasksNew = manager.getHistory();
+        int historySizeNew = historyTasksNew.size();
+
+        assertNotEquals(historySizeOld, historySizeNew);
+        assertEquals(historySizeOld - 1, historySizeNew);
+    }
+
 
 
 

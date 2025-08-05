@@ -44,9 +44,6 @@ private static class Node {
 
         history.put(id, node); // Добавили в историю новый узел
 
-        if (history.size() > 10) { // Если размер истории больше 10
-            remove(head.task.getId()); // Получаем id задачи, узла головы и удаляем, старую, так как удаляем с начала.
-        }
     }
 
     public List<Task> getTasks() { // Метод получения задач. Сложность операции O(n)
@@ -113,9 +110,6 @@ private static class Node {
 
         history.put(id, node); // Добавляем в историю
 
-        if (history.size() > 10) { // Если размер истории >10
-            remove(tail.task.getId()); // Удаляем методом
-        }
     }
 
     @Override
