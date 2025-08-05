@@ -88,7 +88,7 @@ private static class Node {
             remove(id); // Удаляем по id
         }
 
-        Task taskCopy = new Task( // Создаю копию задачи, что бы тест на проверку старой версии задачи работал.
+        Task taskCopy = new Task(// Создаю копию задачи, что бы тест на проверку старой версии задачи работал.
                 task.getId(),
                 task.getName(),
                 task.getDescription(),
