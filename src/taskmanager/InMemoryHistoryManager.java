@@ -91,7 +91,14 @@ private static class Node {
             remove(id); // Удаляем по id
         }
 
-        Node node = new Node(task); // Создаем новый узел.
+        Task taskCopy = new Task( // Создаю копию задачи, что бы тест на проверку старой версии задачи работал.
+                task.getId(),
+                task.getName(),
+                task.getDescription(),
+                task.getTaskStatus()
+        );
+
+        Node node = new Node(taskCopy); // Создаем новый узел на основе копии задачи.
         node.next = head; // Новый узел ссылается на след узел -> Старая голова (nodeNew -> oldHead)
 
         if (head != null) { // Если head не пусто

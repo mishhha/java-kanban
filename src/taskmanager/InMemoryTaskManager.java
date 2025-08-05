@@ -131,9 +131,13 @@ public class InMemoryTaskManager implements TaskManager {
         if (!epics.containsKey(epicId)) { // если мапа не содержит такой ключ с таким id, null!
             return null;
         }
+        int newSubTaskId = getNextId();
+        if (newSubTaskId == epicId) { // Проверка на самоссылку
+            return null;
+        }
         Epic epic = epics.get(subTask.getEpicId()); // Получили Эпик задачу из мапы
         if (epic != null) { // Если задача из мапы не нулл, то выполняем логику
-            subTask.setId(getNextId()); // Установили ID, сгенерированный
+            subTask.setId(newSubTaskId); // Установили ID, сгенерированный
             epic.getSubTasks().add(subTask.getId()); // Добавили ID в список сабтаскID Epica
             subtasks.put(subTask.getId(), subTask); // Добавили в мапу
             updateEpicStatus(epic); // Обновили статус Эпика
