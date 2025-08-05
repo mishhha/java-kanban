@@ -148,7 +148,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task updateTask(Task task) { // Получаем задачу, записываем ее по ID в Map и возвращаем обновленную.
         Task task1 = tasks.get(task.getId());
-        if (!task1.equals(task)){
+        if (!task1.equals(task)) {
             return null;
         }
         tasks.put(task.getId(), task);
@@ -172,7 +172,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task deleteTask(Integer id){ // Принимаем ID объекта, удаляем и возвращаем удаленный объект.
+    public Task deleteTask(Integer id) { // Принимаем ID объекта, удаляем и возвращаем удаленный объект.
         Task removed = tasks.remove(id);
         if (removed != null) {
             historyManager.remove(id); // Удаление из истории
@@ -198,7 +198,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public SubTask deleteSubtasks(Integer id){
+    public SubTask deleteSubtasks(Integer id) {
         SubTask removed = subtasks.remove(id);
         if (removed != null) {
             historyManager.remove(id); // Удаление подзадачи из истории
