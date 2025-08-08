@@ -13,48 +13,15 @@ public class InMemoryHistoryManager implements HistoryManager {
     private Node head;
     private Node tail;
 
-private static class Node {
-    Task task;
-    Node prev;
-    Node next;
+    private static class Node {
+        Task task;
+        Node prev;
+        Node next;
 
     public Node(Task task) {
         this.task = task;
     }
 }
-
-    public void linkLast(Task task) { // Метод по добавлению узлов в конец истории и удаления головы.
-        if (task == null) return; // Если задача пустая, прерываем
-        int id = task.getId(); // Получаем id задачи
-
-        if (history.containsKey(id)) { // Если история содержит узел с таким id
-            remove(id); // Удалить через метод
-        }
-
-        Node node = new Node(task); // Создаем новый узел с задачей, если такой нет.
-
-        if (tail == null) { // Если хвост пустой
-            head = node; // Присваиваем ссылки на голову
-            tail = node; // и на хвост
-        } else { // Иначе если не пустой
-            tail.next = node; // Ссылаем хвост на новый узел
-            node.prev = tail; // А новый узел ссылаем на старый хвост
-            tail = node; // Новым хвостом, стал новый узел.
-        }
-
-        history.put(id, node); // Добавили в историю новый узел
-
-    }
-
-    public List<Task> getTasks() { // Метод получения задач. Сложность операции O(n)
-        List<Task> result = new ArrayList<>(); // Создали список с задачами
-        Node current = head; // Получили узел головы
-        while (current != null) { // Пока узел не нул, продолжаем
-            result.add(current.task); // Добавляем в список
-            current = current.next; // Перешагиваем на след. узел, проходимся по мапе.
-        }
-        return result; // Возвращаем список
-    }
 
     private void removeNode(Node node) { // Метод удаления узла из истории. Сложность амортиз. О(1)
         if (node == null) return; // Если узел не пустой
@@ -88,27 +55,25 @@ private static class Node {
             remove(id); // Удаляем по id
         }
 
-        Task taskCopy = new Task(// Создаю копию задачи, что бы тест на проверку старой версии задачи работал.
+        Task taskCopy = new Task( // Создаю копию задачи, что бы тест на проверку старой версии задачи работал.
                 task.getId(),
                 task.getName(),
                 task.getDescription(),
                 task.getTaskStatus()
         );
 
-        Node node = new Node(taskCopy); // Создаем новый узел на основе копии задачи.
-        node.next = head; // Новый узел ссылается на след узел -> Старая голова (nodeNew -> oldHead)
-
-        if (head != null) { // Если head не пусто
-            head.prev = node; // Старая голова ссылается на предыдущий узел -> новый узел, сдвинули.
-        }
-
-        head = node; // Ну и Head теперь новый узел -> node
+        Node node = new Node(taskCopy); // Создаем новый узел с задачей, если такой нет.
 
         if (tail == null) { // Если хвост пустой
-            tail = node; // Хвост теперь новый узел
+            head = node; // Присваиваем ссылки на голову
+            tail = node; // и на хвост
+        } else { // Иначе если не пустой
+            tail.next = node; // Ссылаем хвост на новый узел
+            node.prev = tail; // А новый узел ссылаем на старый хвост
+            tail = node; // Новым хвостом, стал новый узел.
         }
 
-        history.put(id, node); // Добавляем в историю
+        history.put(id, node); // Добавили в историю новый узел
 
     }
 

@@ -12,8 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class EpicTest {
 
-    HistoryManager historyManager = new InMemoryHistoryManager();
-    InMemoryTaskManager manager = new InMemoryTaskManager(historyManager);
+    TaskManager manager = Managers.getDefault();
 
     @Test
     void tasksWithSameIdShouldBeEqual() { // Проверка Task по ID. Две задачи с 1 ID ==

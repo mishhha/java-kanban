@@ -88,7 +88,7 @@ public class Main {
         // 6. Удаляем одну подзадачу и один эпик
         System.out.println("Удаляем подзадачу и эпик:");
 
-        manager.deleteSubtasks(sub3.getId());
+        manager.deleteSubtaskById(sub3.getId());
         System.out.println("Подзадача удалена");
 
         manager.deleteEpic(roomEpic.getId());
