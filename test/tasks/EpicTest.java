@@ -155,7 +155,7 @@ class EpicTest {
     }
 
     @Test
-    void shouldAddTaskInHistoryInFirst() { // Проверяем метод добавления в начало истории по принципу LIFO
+    void shouldAddTaskInHistoryInLast() { // Проверяем метод добавления в конец истории
         Task task1 = new Task("Первая задача", "Описание", TaskStatus.NEW);
         Task createTask1 = manager.createTask(task1);
         Task taskFromManager1 = manager.getByIdTask(createTask1.getId()); // добавили в историю
@@ -171,7 +171,7 @@ class EpicTest {
         List<Task> history = manager.getHistory();
         Task oldTask = history.get(0);
 
-        assertEquals("Третья задача", oldTask.getName());
+        assertEquals("Первая задача", oldTask.getName());
     }
 
     @Test
