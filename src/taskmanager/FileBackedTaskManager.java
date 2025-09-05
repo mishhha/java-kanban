@@ -14,7 +14,7 @@ import java.util.List;
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
     Path path;
-    private Integer generatorId = 1; // Объявляем переменную для хранения ID
+
     private final HistoryManager historyManager;
 
     private final HashMap<Integer, Task> tasks = new HashMap<>(); // Хранение Task задач.
@@ -24,93 +24,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public FileBackedTaskManager(Path path) {
         this.historyManager = Managers.getDefaultHistory();
         this.path = path;
-    }
-
-    @Override
-    public List<Task> getHistory() {
-        return historyManager.getHistory();
-    }
-
-    @Override
-    public Integer getNextId() { // Метод для генерации след. ID
-        return generatorId++;
-    }
-
-    @Override
-    public ArrayList<Task> printTasks() { // Печать всех задач Task
-        return new ArrayList<>(tasks.values());
-    }
-
-    @Override
-    public ArrayList<Epic> printEpics() { // Печать всех задач Epic
-        return new ArrayList<>(epics.values());
-    }
-
-    @Override
-    public ArrayList<SubTask> printSubtask() { // Печать всех задач SubTask
-        return new ArrayList<>(subtasks.values());
-    }
-
-    @Override
-    public void removeAllTasks() { // Удаление всех задач Task
-        for (Task task : tasks.values()) {
-            historyManager.remove(task.getId());
-        }
-        tasks.clear();
-        save(); // Изменилось состояние задач, сохраняем.
-    }
-
-    @Override
-    public void removeAllEpics() { // Удаление всех задач Epic
-        for (Epic epic : epics.values()) {
-            historyManager.remove(epic.getId());
-        }
-        for (SubTask subTask : subtasks.values()) {
-            historyManager.remove(subTask.getId());
-        }
-        epics.clear();
-        subtasks.clear();
-        save(); // Изменилось состояние задач, сохраняем.
-    }
-
-    @Override
-    public void removeAllSubTasks() { // Удаление всех задач SubTask
-        for (SubTask subTask : subtasks.values()) {
-            historyManager.remove(subTask.getId());
-        }
-        subtasks.clear();
-        for (Epic epic : epics.values()) {
-            epic.getSubTasks().clear();
-            updateEpicStatus(epic);
-        }
-        save(); // Изменилось состояние задач, сохраняем.
-    }
-
-    @Override
-    public Task getByIdTask(Integer id) { // Получить Task по Id
-        Task task = tasks.get(id);
-        if (task != null) {
-            historyManager.add(task);
-        }
-        return task;
-    }
-
-    @Override
-    public Epic getByIdEpic(Integer id) { // Получить Epic по Id
-        Epic epic = epics.get(id);
-        if (epic != null) {
-            historyManager.add(epic);
-        }
-        return epic;
-    }
-
-    @Override
-    public SubTask getByIdSubtask(Integer id) { // Получить Subtask по Id
-        SubTask subtask = subtasks.get(id);
-        if (subtask != null) {
-            historyManager.add(subtask);
-        }
-        return subtask;
     }
 
     @Override
@@ -173,14 +86,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             return null;
         }
         tasks.put(task.getId(), task);
-        save(); // Изменилось состояние задач, сохраняем.
+        save();
         return task;
     }
 
     @Override
     public Epic updateEpic(Epic epic) {
         epics.put(epic.getId(), epic);
-        save(); // Изменилось состояние задач, сохраняем.
+        save();
         return epic;
     }
 
@@ -191,67 +104,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             subtasks.put(subTask.getId(), subTask);
             updateEpicStatus(epic);
         }
-        save(); // Изменилось состояние задач, сохраняем.
+        save();
         return subTask;
-    }
-
-    @Override
-    public Task deleteTask(Integer id) { // Принимаем ID объекта, удаляем и возвращаем удаленный объект.
-        Task removed = tasks.remove(id);
-        if (removed != null) {
-            historyManager.remove(id); // Удаление из истории
-        }
-        save(); // Изменилось состояние задач, сохраняем.
-        return removed;
-    }
-
-    @Override
-    public Epic deleteEpic(Integer id) {
-        Epic epic = epics.get(id); // Получаем задачу из мап по Id
-        if (epic == null) {
-            return null;
-        }
-        for (SubTask subTask : subtasks.values()) { // Перебираем подзадачи
-            if (id.equals(subTask.getEpicId())) { // Если пришедший id сравним с id подзадачи
-                subtasks.remove(subTask.getId()); // Удаляем
-                historyManager.remove(subTask.getId()); // Удаление подзадачи из истории
-            }
-        }
-        epics.remove(id); // Удалили эпик задачу
-        historyManager.remove(id); // Удаление эпика из истории
-        save(); // Изменилось состояние задач, сохраняем.
-        return epic;
-    }
-
-    @Override
-    public SubTask deleteSubtaskById(Integer id) {
-        SubTask removed = subtasks.remove(id);
-        if (removed != null) {
-            historyManager.remove(id); // Удаление подзадачи из истории
-
-            Epic epic = epics.get(removed.getEpicId());
-            if (epic != null) {
-                updateEpicStatus(epic);
-            }
-        }
-        save(); // Изменилось состояние задач, сохраняем.
-        return removed;
-    }
-
-    @Override
-    public ArrayList<SubTask> getSubTasksByEpic(Integer epicId) { // Получение списка всех подзадач определённого эпика.
-        Epic epic = epics.get(epicId);
-        if (epic == null) {
-            return new ArrayList<>();
-        }
-        ArrayList<SubTask> result = new ArrayList<>();
-        for (Integer subTaskId : epic.getSubTasks()) {
-            SubTask subTask = subtasks.get(subTaskId);
-            if (subTask != null) {
-                result.add(subTask);
-            }
-        }
-        return result;
     }
 
     @Override
@@ -278,7 +132,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 epic.setTaskStatus(TaskStatus.IN_PROGRESS);
             }
         }
-        save(); // Изменилось состояние задач, сохраняем.
+        save();
         updateEpic(epic);
     }
 
@@ -287,20 +141,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public String toString(Task task) {
         StringBuilder line = new StringBuilder();
         line.append(task.getId());
-        line.append(", ");
+        line.append(",");
         line.append(task.getType());
-        line.append(", ");
+        line.append(",");
         line.append(task.getName());
-        line.append(", ");
+        line.append(",");
         line.append(task.getTaskStatus());
-        line.append(", ");
+        line.append(",");
         line.append(task.getDescription());
-        line.append(", ");
+        line.append(",");
 
         if (task instanceof SubTask subTask) {
             line.append(subTask.getEpicId());
         }
-
         return line.toString();
     }
 
@@ -326,7 +179,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    static FileBackedTaskManager loadFromFile(File file) {
+    public static FileBackedTaskManager loadFromFile(File file) {
         Path path = file.toPath();
         FileBackedTaskManager manager = new FileBackedTaskManager(path);
         try (
@@ -335,11 +188,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             BufferedReader br = new BufferedReader(isr);
         ) {
             String line;
+
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty() || line.startsWith("id,")) {
                     continue;
                 }
-
                 String[] massiveTransform = line.split(",");
 
                 int id = Integer.parseInt(massiveTransform[0]);
