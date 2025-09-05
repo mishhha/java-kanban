@@ -1,14 +1,22 @@
+import taskmanager.FileBackedTaskManager;
 import taskmanager.TaskManager;
 import taskmanager.Managers;
 import taskmanager.TaskStatus;
+
 import tasks.Task;
 import tasks.SubTask;
 import tasks.Epic;
 
+import java.io.File;
+import java.io.IOException;
+
+
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         TaskManager manager = Managers.getDefault();
+        File fileToBackup = File.createTempFile("backup-", ".csv");
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(fileToBackup.toPath());
 
     // Тесты ФЗ - Спринт 4
 
@@ -144,6 +152,50 @@ public class Main {
         for (Task task : manager.getHistory()) {
             System.out.println(task);
         }
+
+        manager.removeAllTasks();
+        manager.removeAllEpics();
+        manager.removeAllSubTasks();
+
+        System.out.println(manager.printTasks());
+        System.out.println(manager.printEpics());
+        System.out.println(manager.printSubtask() + "\n");
+        System.out.println("Задач нет, пусто. \n");
+
+        // Проверяем функциональность Спринта №7
+
+        System.out.println("--------".repeat(10));
+        System.out.println("Проверяем функциональность Спринта №7 \n");
+
+        System.out.println("Создаем 3 задачи: Task, Epic, Subtask \n");
+
+        Task test = new Task("Задача", "Описание", TaskStatus.NEW);
+        fileBackedTaskManager.createTask(test);
+        Epic epic  = new Epic("Задача Эпик", "Описание Эпик");
+        fileBackedTaskManager.createEpic(epic);
+        SubTask subTask = new SubTask("Задача Сабтаск", "Описание Сабтаск", epic.getId());
+        fileBackedTaskManager.createSubTask(subTask);
+
+        System.out.println("Проверяем, создались ли они ?");
+
+        System.out.println(fileBackedTaskManager.printTasks());
+        System.out.println(fileBackedTaskManager.printEpics());
+        System.out.println(fileBackedTaskManager.printSubtask());
+
+        System.out.println("\nПроверяем получение задач по id");
+
+        System.out.println(fileBackedTaskManager.getByIdTask(test.getId()));
+        System.out.println(fileBackedTaskManager.getByIdEpic(epic.getId()));
+        System.out.println(fileBackedTaskManager.getByIdSubtask(subTask.getId()));
+
+        System.out.println("\nЗадачи сохранены, проверяем загрузку из файла.");
+
+
+
+
+
+
+
 
     }
 }

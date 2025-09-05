@@ -1,6 +1,7 @@
 package tasks;
 
 import taskmanager.TaskStatus;
+import taskmanager.TaskType;
 
 import java.util.Objects;
 
@@ -9,6 +10,11 @@ public class Task {
     private String description;
     private Integer id;
     private TaskStatus taskStatus;
+    private TaskType taskType;
+
+    public TaskType getType() {
+        return TaskType.TASK;
+    }
 
     public String getName() {
         return name;
