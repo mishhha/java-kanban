@@ -25,8 +25,8 @@ public class Main {
 
         System.out.println("Создаем 3 задачи: Task, Epic, Subtask \n");
 
-        Task test = new Task("Задача", "Описание", TaskStatus.NEW);
-        fileBackedTaskManager.createTask(test);
+        Task task = new Task("Задача", "Описание", TaskStatus.NEW);
+        fileBackedTaskManager.createTask(task);
         Epic epic  = new Epic("Задача Эпик", "Описание Эпик");
         fileBackedTaskManager.createEpic(epic);
         SubTask subTask = new SubTask("Задача Сабтаск", "Описание Сабтаск", epic.getId());
@@ -40,7 +40,7 @@ public class Main {
 
         System.out.println("\nПроверяем получение задач по id");
 
-        System.out.println(fileBackedTaskManager.getByIdTask(test.getId()));
+        System.out.println(fileBackedTaskManager.getByIdTask(task.getId()));
         System.out.println(fileBackedTaskManager.getByIdEpic(epic.getId()));
         System.out.println(fileBackedTaskManager.getByIdSubtask(subTask.getId()));
 
