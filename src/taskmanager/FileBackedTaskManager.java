@@ -9,20 +9,17 @@ import java.nio.file.Path;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
     Path path;
-
-    private final HistoryManager historyManager;
 
     private final HashMap<Integer, Task> tasks = new HashMap<>(); // Хранение Task задач.
     private final HashMap<Integer, Epic> epics = new HashMap<>(); // Хранение Epic задач.
     private final HashMap<Integer, SubTask> subtasks = new HashMap<>(); // Хранение Subtask задач.
 
     public FileBackedTaskManager(Path path) {
-        this.historyManager = Managers.getDefaultHistory();
+        super();
         this.path = path;
     }
 
