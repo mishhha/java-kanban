@@ -8,17 +8,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
     Path path;
-
-    private final HashMap<Integer, Task> tasks = new HashMap<>(); // Хранение Task задач.
-    private final HashMap<Integer, Epic> epics = new HashMap<>(); // Хранение Epic задач.
-    private final HashMap<Integer, SubTask> subtasks = new HashMap<>(); // Хранение Subtask задач.
-
     HistoryManager historyManager;
 
     public FileBackedTaskManager(Path path) {
@@ -27,232 +20,144 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public List<Task> getHistory() {
-        return historyManager.getHistory();
-    }
-
-    @Override
     public ArrayList<Task> printTasks() { // Печать всех задач Task
-        return new ArrayList<>(tasks.values());
+        return new ArrayList<>(super.printTasks()); // Так как поле private в IMTM, получаем через метод.
     }
 
     @Override
     public ArrayList<Epic> printEpics() { // Печать всех задач Epic
-        return new ArrayList<>(epics.values());
+        return new ArrayList<>(super.printEpics());
     }
 
     @Override
     public ArrayList<SubTask> printSubtask() { // Печать всех задач SubTask
-        return new ArrayList<>(subtasks.values());
+        return new ArrayList<>(super.printSubtask());
     }
 
     @Override
     public Task getByIdTask(Integer id) { // Получить Task по Id
-        Task task = tasks.get(id);
-        if (task != null) {
-            historyManager.add(task);
-        }
-        return task;
+        Task getTask = super.getByIdTask(id); // Пришел null или задача.
+            if(getTask != null) { // Если не null сохраняем.
+                save();
+            }
+        return getTask; // Возвращаем или null или задачу.
     }
 
     @Override
     public Epic getByIdEpic(Integer id) { // Получить Epic по Id
-        Epic epic = epics.get(id);
-        if (epic != null) {
-            historyManager.add(epic);
+        Epic getEpic = super.getByIdEpic(id);
+        if(getEpic != null) {
+            save();
         }
-        return epic;
+        return getEpic;
     }
 
     @Override
     public SubTask getByIdSubtask(Integer id) { // Получить Subtask по Id
-        SubTask subtask = subtasks.get(id);
-        if (subtask != null) {
-            historyManager.add(subtask);
+        SubTask subTask = super.getByIdSubtask(id);
+        if (subTask != null) {
+            save();
         }
-        return subtask;
+        return subTask;
     }
 
     @Override
     public void removeAllTasks() { // Удаление всех задач Task
-        for (Task task : tasks.values()) {
-            historyManager.remove(task.getId());
-        }
-        tasks.clear();
+        super.removeAllTasks(); // Обратились через родительский метод.
+        save();
     }
 
     @Override
     public void removeAllEpics() { // Удаление всех задач Epic
-        for (Epic epic : epics.values()) {
-            historyManager.remove(epic.getId());
-        }
-        for (SubTask subTask : subtasks.values()) {
-            historyManager.remove(subTask.getId());
-        }
-        epics.clear();
-        subtasks.clear();
+        super.removeAllEpics();
+        save();
     }
 
     @Override
     public void removeAllSubTasks() { // Удаление всех задач SubTask
-        for (SubTask subTask : subtasks.values()) {
-            historyManager.remove(subTask.getId());
-        }
-        subtasks.clear();
-        for (Epic epic : epics.values()) {
-            epic.getSubTasks().clear();
-            updateEpicStatus(epic);
-        }
+        super.removeAllSubTasks();
+        save();
     }
 
     @Override
-    public Task deleteTask(Integer id) { // Принимаем ID объекта, удаляем и возвращаем удаленный объект.
-        Task removed = tasks.remove(id);
+    public Task deleteTask(Integer id) { // Удаляем TASK задачу по ID
+        Task removed = super.deleteTask(id); // Обратились через родительский метод.
         if (removed != null) {
-            historyManager.remove(id); // Удаление из истории
+            save();
         }
         return removed;
     }
 
     @Override
-    public Epic deleteEpic(Integer id) {
-        Epic epic = epics.get(id); // Получаем задачу из мап по Id
-        if (epic == null) {
-            return null;
-        }
-        for (SubTask subTask : subtasks.values()) { // Перебираем подзадачи
-            if (id.equals(subTask.getEpicId())) { // Если пришедший id сравним с id подзадачи
-                subtasks.remove(subTask.getId()); // Удаляем
-                historyManager.remove(subTask.getId()); // Удаление подзадачи из истории
-            }
-        }
-        epics.remove(id); // Удалили эпик задачу
-        historyManager.remove(id); // Удаление эпика из истории
-        return epic;
-    }
-
-    @Override
-    public SubTask deleteSubtaskById(Integer id) {
-        SubTask removed = subtasks.remove(id);
+    public Epic deleteEpic(Integer id) { // Удаляем EPIC задачу по ID
+        Epic removed = super.deleteEpic(id);
         if (removed != null) {
-            historyManager.remove(id); // Удаление подзадачи из истории
-
-            Epic epic = epics.get(removed.getEpicId());
-            if (epic != null) {
-                updateEpicStatus(epic);
-            }
+            save();
         }
         return removed;
     }
 
     @Override
-    public Task createTask(Task task) { // К Task задаче добавили ID и добавили ее по ID в Map, вернули задачу.
-        if (task == null) {
-            System.out.println("Пустой объект");
-            return null;
+    public SubTask deleteSubtaskById(Integer id) { // Удаляем SubTask задачу по ID
+        SubTask removed = super.deleteSubtaskById(id);
+        if (removed != null) {
+            save();
         }
-        if (tasks.containsValue(task)) {
-            System.out.println("Такая задача уже существует");
-            return null;
-        }
-        task.setId(getNextId());
-        tasks.put(task.getId(), task);
-        save();
-        return task;
+        return removed;
     }
 
     @Override
-    public Epic createEpic(Epic epic) {
-        if (epic == null) {
-            System.out.println("Пустой объект");
-            return null;
+    public Task createTask(Task task) { // Создание Task
+        Task result = super.createTask(task); // Обратились через родительский метод.
+        if(result != null) {
+            save();
         }
-        if (epics.containsValue(epic)) {
-            System.out.println("Такой эпик уже существует");
-            return null;
-        }
-        epic.setId(getNextId());
-        epics.put(epic.getId(), epic);
-        save();
-        return epic;
+        return result;
     }
 
     @Override
-    public SubTask createSubTask(SubTask subTask) {
-        Integer epicId = subTask.getEpicId(); // Получили epicID подзадачи
-        if (!epics.containsKey(epicId)) { // если мапа не содержит такой ключ с таким id, null!
-            return null;
+    public Epic createEpic(Epic epic) { // Создание Epic
+        Epic result = super.createEpic(epic);
+        if(result != null) {
+            save();
         }
-        int newSubTaskId = getNextId();
-        if (newSubTaskId == epicId) { // Проверка на самоссылку
-            return null;
+        return result;
+    }
+
+    @Override
+    public SubTask createSubTask(SubTask subTask) { // Создание Subtask
+        SubTask result = super.createSubTask(subTask);
+        if(result != null) {
+            save();
         }
-        Epic epic = epics.get(subTask.getEpicId()); // Получили Эпик задачу из мапы
-        if (epic != null) { // Если задача из мапы не нулл, то выполняем логику
-            subTask.setId(newSubTaskId); // Установили ID, сгенерированный
-            epic.getSubTasks().add(subTask.getId()); // Добавили ID в список сабтаскID Epica
-            subtasks.put(subTask.getId(), subTask); // Добавили в мапу
-            updateEpicStatus(epic); // Обновили статус Эпика
-        }
-        save();
-        return subTask;
+        return result;
     }
 
     @Override
     public Task updateTask(Task task) { // Получаем задачу, записываем ее по ID в Map и возвращаем обновленную.
-        Task task1 = tasks.get(task.getId());
-        if (!task1.equals(task)) {
-            return null;
+        Task update = super.updateTask(task);
+        if(update != null) {
+            save();
         }
-        tasks.put(task.getId(), task);
-
-        return task;
+        return update;
     }
 
     @Override
     public Epic updateEpic(Epic epic) {
-        epics.put(epic.getId(), epic);
-
-        return epic;
+        Epic update = super.updateEpic(epic);
+        if(update != null) {
+            save();
+        }
+        return update;
     }
 
     @Override
     public SubTask updateSubtask(SubTask subTask) {
-        Epic epic = epics.get(subTask.getEpicId());
-        if (epic != null) {
-            subtasks.put(subTask.getId(), subTask);
-            updateEpicStatus(epic);
+        SubTask update = super.updateSubtask(subTask);
+        if(update != null) {
+            save();
         }
-
-        return subTask;
-    }
-
-    @Override
-    public void updateEpicStatus(Epic epic) {
-        ArrayList<SubTask> subs = getSubTasksByEpic(epic.getId());
-        if (subs.isEmpty()) {
-            epic.setTaskStatus(TaskStatus.NEW);
-        } else {
-            boolean allNew = true;
-            boolean allDone = true;
-            for (SubTask sub : subs) {
-                if (sub.getTaskStatus() != TaskStatus.NEW) {
-                    allNew = false;
-                }
-                if (sub.getTaskStatus() != TaskStatus.DONE) {
-                    allDone = false;
-                }
-            }
-            if (allNew) {
-                epic.setTaskStatus(TaskStatus.NEW);
-            } else if (allDone) {
-                epic.setTaskStatus(TaskStatus.DONE);
-            } else {
-                epic.setTaskStatus(TaskStatus.IN_PROGRESS);
-            }
-        }
-
-        updateEpic(epic);
+        return update;
     }
 
 // Новая функциональность Спринта №7
@@ -277,9 +182,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     public void save() {
-        ArrayList<Task> allTasks = new ArrayList<>(tasks.values());
-        allTasks.addAll(epics.values());
-        allTasks.addAll(subtasks.values());
+        ArrayList<Task> allTasks = new ArrayList<>(printTasks());
+        allTasks.addAll(printEpics());
+        allTasks.addAll(printSubtask());
         try (
              BufferedWriter bw = new BufferedWriter(
                  new OutputStreamWriter(
