@@ -37,13 +37,13 @@ public interface TaskManager {
 
     Epic deleteEpic(Integer id); // Удалить Epic
 
-    SubTask deleteSubtasks(Integer id); // Удалить Subtasks
+    SubTask deleteSubtaskById(Integer id); // Удалить Subtasks
 
-    void removeTasks(); // Удалить Task.
+    void removeAllTasks(); // Удалить Task.
 
-    void removeEpic(); // Удалить Epic.
+    void removeAllEpics(); // Удалить Epic.
 
-    void removeSubTask(); // Удалить SubTask.
+    void removeAllSubTasks(); // Удалить SubTask.
 
     ArrayList<Task> printTasks();
 

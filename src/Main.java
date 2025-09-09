@@ -1,15 +1,57 @@
+import taskmanager.FileBackedTaskManager;
 import taskmanager.TaskManager;
 import taskmanager.Managers;
 import taskmanager.TaskStatus;
+
 import tasks.Task;
 import tasks.SubTask;
 import tasks.Epic;
 
+import java.io.File;
+import java.io.IOException;
+// import java.nio.file.Files;
+
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         TaskManager manager = Managers.getDefault();
+        File fileToBackup = File.createTempFile("backup-", ".csv");
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(fileToBackup.toPath());
 
+        // Проверяем функциональность Спринта №7
+
+        System.out.println("--------".repeat(10));
+        System.out.println("Проверяем функциональность Спринта №7 \n");
+
+        System.out.println("Создаем 3 задачи: Task, Epic, Subtask \n");
+
+        Task task = new Task("Задача", "Описание", TaskStatus.NEW);
+        fileBackedTaskManager.createTask(task);
+        Epic epic  = new Epic("Задача Эпик", "Описание Эпик");
+        fileBackedTaskManager.createEpic(epic);
+        SubTask subTask = new SubTask("Задача Сабтаск", "Описание Сабтаск", epic.getId());
+        fileBackedTaskManager.createSubTask(subTask);
+
+        System.out.println("Проверяем, создались ли они ?");
+
+        System.out.println(fileBackedTaskManager.printTasks());
+        System.out.println(fileBackedTaskManager.printEpics());
+        System.out.println(fileBackedTaskManager.printSubtask());
+
+        System.out.println("\nПроверяем получение задач по id");
+
+        System.out.println(fileBackedTaskManager.getByIdTask(task.getId()));
+        System.out.println(fileBackedTaskManager.getByIdEpic(epic.getId()));
+        System.out.println(fileBackedTaskManager.getByIdSubtask(subTask.getId()));
+
+        System.out.println("\nЗагружаем Задачи, проверяем загрузку из файла.");
+        FileBackedTaskManager loadBeckUpFile = FileBackedTaskManager.loadFromFile(fileToBackup);
+
+        System.out.println(loadBeckUpFile.printTasks());
+        System.out.println(loadBeckUpFile.printEpics());
+        System.out.println(loadBeckUpFile.printSubtask());
+
+    /*
     // Тесты ФЗ - Спринт 4
 
         // 1. Создаем две обычные задачи
@@ -88,7 +130,7 @@ public class Main {
         // 6. Удаляем одну подзадачу и один эпик
         System.out.println("Удаляем подзадачу и эпик:");
 
-        manager.deleteSubtasks(sub3.getId());
+        manager.deleteSubtaskById(sub3.getId());
         System.out.println("Подзадача удалена");
 
         manager.deleteEpic(roomEpic.getId());
@@ -144,6 +186,24 @@ public class Main {
         for (Task task : manager.getHistory()) {
             System.out.println(task);
         }
+
+        manager.removeAllTasks();
+        manager.removeAllEpics();
+        manager.removeAllSubTasks();
+
+        System.out.println(manager.printTasks());
+        System.out.println(manager.printEpics());
+        System.out.println(manager.printSubtask() + "\n");
+        System.out.println("Задач нет, пусто. \n");
+*/
+
+
+
+
+
+
+
+
 
     }
 }
