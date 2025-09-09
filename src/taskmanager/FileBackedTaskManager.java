@@ -35,7 +35,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public Task getByIdTask(Integer id) { // Получить Task по Id
         Task getTask = super.getByIdTask(id); // Пришел null или задача.
-            if(getTask != null) { // Если не null сохраняем.
+            if (getTask != null) { // Если не null сохраняем.
                 save();
             }
         return getTask; // Возвращаем или null или задачу.
@@ -44,7 +44,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public Epic getByIdEpic(Integer id) { // Получить Epic по Id
         Epic getEpic = super.getByIdEpic(id);
-        if(getEpic != null) {
+        if (getEpic != null) {
             save();
         }
         return getEpic;
@@ -107,7 +107,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public Task createTask(Task task) { // Создание Task
         Task result = super.createTask(task); // Обратились через родительский метод.
-        if(result != null) {
+        if (result != null) {
             save();
         }
         return result;
@@ -116,7 +116,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public Epic createEpic(Epic epic) { // Создание Epic
         Epic result = super.createEpic(epic);
-        if(result != null) {
+        if (result != null) {
             save();
         }
         return result;
@@ -125,7 +125,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public SubTask createSubTask(SubTask subTask) { // Создание Subtask
         SubTask result = super.createSubTask(subTask);
-        if(result != null) {
+        if (result != null) {
             save();
         }
         return result;
@@ -134,7 +134,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public Task updateTask(Task task) { // Получаем задачу, записываем ее по ID в Map и возвращаем обновленную.
         Task update = super.updateTask(task);
-        if(update != null) {
+        if (update != null) {
             save();
         }
         return update;
@@ -143,7 +143,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public Epic updateEpic(Epic epic) {
         Epic update = super.updateEpic(epic);
-        if(update != null) {
+        if (update != null) {
             save();
         }
         return update;
@@ -152,7 +152,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public SubTask updateSubtask(SubTask subTask) {
         SubTask update = super.updateSubtask(subTask);
-        if(update != null) {
+        if (update != null) {
             save();
         }
         return update;

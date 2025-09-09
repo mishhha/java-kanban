@@ -44,16 +44,6 @@ public class Main {
         System.out.println(fileBackedTaskManager.getByIdEpic(epic.getId()));
         System.out.println(fileBackedTaskManager.getByIdSubtask(subTask.getId()));
 
-        System.out.println("\nУдаляем задачи");
-        fileBackedTaskManager.removeAllTasks();
-        fileBackedTaskManager.removeAllEpics();
-        fileBackedTaskManager.removeAllSubTasks();
-
-        System.out.println(fileBackedTaskManager.printTasks());
-        System.out.println(fileBackedTaskManager.printEpics());
-        System.out.println(fileBackedTaskManager.printSubtask());
-        System.out.println("Задач нет, пусто. \n");
-
         System.out.println("\nЗагружаем Задачи, проверяем загрузку из файла.");
         FileBackedTaskManager loadBeckUpFile = FileBackedTaskManager.loadFromFile(fileToBackup);
 
