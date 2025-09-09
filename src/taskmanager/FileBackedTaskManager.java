@@ -12,10 +12,8 @@ import java.util.ArrayList;
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
     Path path;
-    HistoryManager historyManager;
 
     public FileBackedTaskManager(Path path) {
-        this.historyManager = Managers.getDefaultHistory();
         this.path = path;
     }
 
@@ -162,25 +160,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
 // Новая функциональность Спринта №7
 
-    public String toString(Task task) {
-        StringBuilder line = new StringBuilder();
-        line.append(task.getId());
-        line.append(",");
-        line.append(task.getType());
-        line.append(",");
-        line.append(task.getName());
-        line.append(",");
-        line.append(task.getTaskStatus());
-        line.append(",");
-        line.append(task.getDescription());
-        line.append(",");
-
-        if (task instanceof SubTask subTask) {
-            line.append(subTask.getEpicId());
-        }
-        return line.toString();
-    }
-
     public void save() {
         ArrayList<Task> allTasks = new ArrayList<>(printTasks());
         allTasks.addAll(printEpics());
@@ -195,7 +174,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             bw.newLine();
 
             for (Task task : allTasks) {
-                bw.write(toString(task));
+                bw.write(CsvTaskHelper.parseToString(task));
                 bw.newLine();
             }
         } catch (IOException e) {
@@ -217,63 +196,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 if (line.trim().isEmpty() || line.startsWith("id,")) {
                     continue;
                 }
-                String[] massiveTransform = line.split(",");
-
-                int id = Integer.parseInt(massiveTransform[0]);
-                String type = massiveTransform[1].trim();
-                String name = massiveTransform[2].trim();
-                String description = massiveTransform[3].trim();
-                String status = massiveTransform[4].trim();
-                int epicIdSub = -1;
-                if (massiveTransform.length > 5 && !massiveTransform[5].trim().isEmpty()) {
-                    epicIdSub = Integer.parseInt(massiveTransform[5]);
-                }
-
-                switch (type) {
-                    case "TASK" :
-                        Task task = new Task(name, description, TaskStatus.NEW);
-                        task.setId(id);
-                        if ("IN_PROGRESS".equals(status)) {
-                            task.setTaskStatus(TaskStatus.IN_PROGRESS);
-                        } else if ("DONE".equals(status)) {
-                            task.setTaskStatus(TaskStatus.DONE);
-                        }
-                        manager.createTask(task);
-                        break;
-
-                    case "EPIC" :
-                        Epic epic = new Epic(name, description);
-                        epic.setId(id);
-                        switch (status) {
-                            case "NEW":
-                                epic.setTaskStatus(TaskStatus.NEW);
-                                break;
-                            case "IN_PROGRESS":
-                                epic.setTaskStatus(TaskStatus.IN_PROGRESS);
-                                break;
-                            case "DONE":
-                                epic.setTaskStatus(TaskStatus.DONE);
-                                break;
-                        }
-                        manager.createEpic(epic);
-                        break;
-
-                    case "SUBTASK" :
-                        SubTask subTask = new SubTask(name, description, epicIdSub);
-                        subTask.setId(id);
-                        subTask.setEpicId(epicIdSub);
-                        subTask.setTaskStatus(TaskStatus.NEW);
-                        if ("IN_PROGRESS".equals(status)) {
-                            subTask.setTaskStatus(TaskStatus.IN_PROGRESS);
-                        } else if ("DONE".equals(status)) {
-                            subTask.setTaskStatus(TaskStatus.DONE);
-                        }
+                Task task = CsvTaskHelper.parseFromString(line);
+                if(task != null) {
+                    if (task instanceof SubTask subTask) {
                         manager.createSubTask(subTask);
-                        break;
-
-                    default:
-                        System.out.println("Неизвестный тип задачи: " + type);
-                        break;
+                    } else if (task instanceof Epic epic) {
+                        manager.createEpic(epic);
+                    } else {
+                        manager.createTask(task);
+                    }
                 }
             }
         } catch (IOException e) {
