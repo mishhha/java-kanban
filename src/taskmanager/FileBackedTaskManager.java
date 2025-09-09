@@ -197,7 +197,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     continue;
                 }
                 Task task = CsvTaskHelper.parseFromString(line);
-                if(task != null) {
+                if (task != null) {
                     if (task instanceof SubTask subTask) {
                         manager.createSubTask(subTask);
                     } else if (task instanceof Epic epic) {
