@@ -9,14 +9,14 @@ import tasks.Epic;
 
 import java.io.File;
 import java.io.IOException;
-// import java.nio.file.Files;
+import java.nio.file.Files;
 
 
 public class Main {
     public static void main(String[] args) throws IOException {
         TaskManager manager = Managers.getDefault();
         File fileToBackup = File.createTempFile("backup-", ".csv");
-        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(fileToBackup.toPath());
+        FileBackedTaskManager fileBackedTaskManager = Managers.getDefaultBacked(fileToBackup.toPath());
 
         // Проверяем функциональность Спринта №7
 

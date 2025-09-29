@@ -3,6 +3,8 @@ package tasks;
 import taskmanager.TaskStatus;
 import taskmanager.TaskType;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -11,6 +13,31 @@ public class Task {
     private Integer id;
     private TaskStatus taskStatus;
     private TaskType taskType;
+    private Duration duration;
+    private LocalDateTime startTime;
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime == null || duration == null) {
+            return null;
+        }
+        return startTime.plus(duration);
+    }
 
     public TaskType getType() {
         return TaskType.TASK;
@@ -60,6 +87,15 @@ public class Task {
         this.description = description;
         this.taskStatus = taskStatus;
     }
+
+    public Task(String name, String description, TaskStatus taskStatus, LocalDateTime startTime, Duration duration) {
+        this.name = name;
+        this.description = description;
+        this.taskStatus = taskStatus;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
 
     @Override
     public boolean equals(Object o) {

@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import taskmanager.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -13,6 +15,73 @@ import static org.junit.jupiter.api.Assertions.*;
 class EpicTest {
 
     TaskManager manager = Managers.getDefault();
+
+    @Test
+    void taskShouldReturnStartTime() {
+        LocalDateTime testTime = LocalDateTime.of(2025, 10, 1, 14, 30);
+        Duration duration = Duration.ofHours(2);
+
+        Task task = new Task("Задача", "Описание", TaskStatus.NEW, testTime, duration);
+
+        LocalDateTime result = task.getStartTime();
+
+        assertNotNull(result);
+        assertEquals(testTime, result);
+    }
+
+    @Test
+    void taskShouldReturnDuration() {
+        Duration expectedDuration = Duration.ofMinutes(90);
+        Task task = new Task("Задача", "Описание", TaskStatus.NEW, LocalDateTime.now(), expectedDuration);
+
+        Duration result = task.getDuration();
+
+        assertNotNull(result);
+        assertEquals(expectedDuration, result);
+    }
+
+    @Test
+    void getEndTimeShouldBeStartTimePlusDuration() {
+        LocalDateTime startTime = LocalDateTime.of(2025, 10, 1, 10, 0);
+        Duration duration = Duration.ofHours(3); // 3 часа
+        LocalDateTime expectedEnd = LocalDateTime.of(2025, 10, 1, 13, 0);
+
+        Task task = new Task("Задача", "Описание", TaskStatus.NEW, startTime, duration);
+
+        LocalDateTime actualEnd = task.getEndTime();
+
+        assertEquals(expectedEnd, actualEnd);
+    }
+
+    @Test
+    void getEndTimeShouldReturnNullIfStartTimeIsNull() {
+        Task task = new Task("Задача", "Описание", TaskStatus.NEW,null, Duration.ofHours(1));
+
+        assertNull(task.getEndTime());
+    }
+
+    @Test
+    void getEndTimeShouldReturnNullIfDurationIsNull() {
+        Task task = new Task("Задача", "Описание", TaskStatus.NEW, LocalDateTime.now(), null);
+
+        assertNull(task.getEndTime());
+    }
+
+    @Test
+    void shouldUpdateStartTimeAndDuration() {
+        Task task = new Task("Задача", "Описание", TaskStatus.NEW, null, null);
+
+        LocalDateTime newStart = LocalDateTime.of(2025, 10, 2, 9, 0);
+        Duration newDuration = Duration.ofMinutes(45);
+
+        task.setStartTime(newStart);
+        task.setDuration(newDuration);
+
+        assertEquals(newStart, task.getStartTime());
+        assertEquals(newDuration, task.getDuration());
+        assertEquals(newStart.plus(newDuration), task.getEndTime());
+    }
+
 
     @Test
     void tasksWithSameIdShouldBeEqual() { // Проверка Task по ID. Две задачи с 1 ID ==

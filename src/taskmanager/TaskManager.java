@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface TaskManager {
 
+    void updateTimes(Epic epic);
+
     Integer getNextId(); // Метод для генерации след. Id
 
     Task createTask(Task task); // Создать Task
