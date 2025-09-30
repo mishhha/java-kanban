@@ -16,6 +16,116 @@ class EpicTest {
 
     TaskManager manager = Managers.getDefault();
 
+    // Тесты для prioritizedTask
+
+    @Test
+    void shouldSortTasksByStartTime() {
+        // Дано: задачи с разным временем
+        Task task1 = new Task("A", "desc", TaskStatus.NEW);
+        task1.setStartTime(LocalDateTime.of(2025, 1, 1, 10, 0));
+        task1.setDuration(Duration.ofHours(1));
+
+        Task task2 = new Task("B", "desc", TaskStatus.NEW);
+        task2.setStartTime(LocalDateTime.of(2025, 1, 1, 9, 0));
+        task2.setDuration(Duration.ofHours(1));
+
+        Task task3 = new Task("C", "desc", TaskStatus.NEW);
+        task3.setStartTime(LocalDateTime.of(2025, 1, 1, 11, 0));
+        task3.setDuration(Duration.ofHours(1));
+
+        // Когда: создаём задачи
+        manager.createTask(task1);
+        manager.createTask(task2);
+        manager.createTask(task3);
+
+        // Тогда: порядок должен быть по времени: B → A → C
+        List<Task> prioritized = manager.getPrioritizedTasks();
+        assertEquals(3, prioritized.size());
+        assertEquals("B", prioritized.get(0).getName());
+        assertEquals("A", prioritized.get(1).getName());
+        assertEquals("C", prioritized.get(2).getName());
+    }
+
+    @Test
+    void shouldNotLoseTasksWithSameStartTime() {
+        Task task1 = new Task("A", "desc", TaskStatus.NEW);
+        task1.setStartTime(LocalDateTime.of(2025, 1, 1, 10, 0));
+        task1.setId(1);
+
+        Task task2 = new Task("B", "desc", TaskStatus.NEW);
+        task2.setStartTime(LocalDateTime.of(2025, 1, 1, 10, 0));
+        task2.setId(2);
+
+        manager.createTask(task1);
+        manager.createTask(task2);
+
+        List<Task> prioritized = manager.getPrioritizedTasks();
+        assertEquals(2, prioritized.size());
+        // Порядок определяется id
+        assertEquals(1, prioritized.get(0).getId());
+        assertEquals(2, prioritized.get(1).getId());
+    }
+
+    @Test
+    void shouldPutNullStartTimeTasksAtEnd() {
+        Task task1 = new Task("A", "desc", TaskStatus.NEW);
+        task1.setStartTime(LocalDateTime.of(2025, 1, 1, 10, 0));
+
+        Task task2 = new Task("B", "desc", TaskStatus.NEW); // startTime == null
+
+        manager.createTask(task1);
+        manager.createTask(task2);
+
+        List<Task> prioritized = manager.getPrioritizedTasks();
+        assertEquals("A", prioritized.get(0).getName()); // с временем — в начале
+        assertEquals("B", prioritized.get(1).getName()); // без времени — в конце
+    }
+
+    @Test
+    void shouldRepositionTaskAfterUpdate() {
+        Task task1 = new Task("A", "desc", TaskStatus.NEW);
+        task1.setStartTime(LocalDateTime.of(2025, 1, 1, 10, 0));
+        manager.createTask(task1);
+
+        Task task2 = new Task("B", "desc", TaskStatus.NEW);
+        task2.setStartTime(LocalDateTime.of(2025, 1, 1, 12, 0));
+        manager.createTask(task2);
+
+        // Меняем startTime у task1 на более позднее время
+        task1.setStartTime(LocalDateTime.of(2025, 1, 1, 13, 0));
+        manager.updateTask(task1);
+
+        List<Task> prioritized = manager.getPrioritizedTasks();
+        assertEquals("B", prioritized.get(0).getName());
+        assertEquals("A", prioritized.get(1).getName());
+    }
+
+    @Test
+    void shouldRemoveTaskFromPrioritizedOnDelete() {
+        Task task = new Task("A", "desc", TaskStatus.NEW);
+        task.setStartTime(LocalDateTime.of(2025, 1, 1, 10, 0));
+        manager.createTask(task);
+
+        manager.deleteTask(task.getId());
+
+        List<Task> prioritized = manager.getPrioritizedTasks();
+        assertTrue(prioritized.isEmpty());
+    }
+
+    @Test
+    void shouldIncludeSubTaskAndEpicInPrioritized() {
+        Epic epic = new Epic("Epic", "desc");
+        manager.createEpic(epic);
+
+        SubTask subTask = new SubTask("Sub", "desc", epic.getId());
+        subTask.setStartTime(LocalDateTime.of(2025, 1, 1, 8, 0));
+        manager.createSubTask(subTask);
+
+        List<Task> prioritized = manager.getPrioritizedTasks();
+        assertTrue(prioritized.contains(subTask));
+        assertTrue(prioritized.contains(epic)); // даже если startTime == null → epic будет в конце
+    }
+
     // Тесты 8 спринт
 
     @Test

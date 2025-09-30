@@ -357,6 +357,5 @@ public class InMemoryTaskManager implements TaskManager {
                 epic.setTaskStatus(TaskStatus.IN_PROGRESS);
             }
         }
-        updateEpic(epic);
     }
 }
