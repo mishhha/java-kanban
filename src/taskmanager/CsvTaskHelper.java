@@ -47,10 +47,9 @@ public class CsvTaskHelper {
         String status = massiveTransform[3].trim();
         String description = massiveTransform[4].trim();
 
-
+        int epicIdSub = -1;
         LocalDateTime startTime = null;
         Duration duration = null;
-        int epicIdSub = -1;
 
         if (massiveTransform.length > 5 && !massiveTransform[5].trim().isEmpty()) {
             epicIdSub = Integer.parseInt(massiveTransform[5]);

@@ -5,16 +5,17 @@ import tasks.Task;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
     private final HashMap<Integer, Task> tasks = new HashMap<>(); // Хранение Task задач.
     private final HashMap<Integer, Epic> epics = new HashMap<>(); // Хранение Epic задач.
     private final HashMap<Integer, SubTask> subtasks = new HashMap<>(); // Хранение Subtask задач.
+
+    // Функциональность 8 спринт
+
+    private final TreeSet<Task> prioritizedTasks = new TreeSet<>(Task.BY_START_TIME);
 
     // Новая функциональность для ФЗ Спринта 5
 
@@ -27,7 +28,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateTimes(Epic epic) {
+    public void updateTimes(Epic epic) { // Реализация метода поиска и суммирования времени подзадач.
         List<SubTask> epicSubTasks = getSubTasksByEpic(epic.getId());
 
         LocalDateTime firstTimeSubTask = epicSubTasks.stream()
@@ -50,6 +51,10 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setDuration(totalDuration);
         epic.setStartTime(firstTimeSubTask);
         epic.setEndTime(lastTimeSubTask);
+    }
+
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
     }
 
     @Override

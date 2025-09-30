@@ -16,6 +16,8 @@ class EpicTest {
 
     TaskManager manager = Managers.getDefault();
 
+    // Тесты 8 спринт
+
     @Test
     void taskShouldReturnStartTime() {
         LocalDateTime testTime = LocalDateTime.of(2025, 10, 1, 14, 30);
@@ -82,6 +84,7 @@ class EpicTest {
         assertEquals(newStart.plus(newDuration), task.getEndTime());
     }
 
+    //
 
     @Test
     void tasksWithSameIdShouldBeEqual() { // Проверка Task по ID. Две задачи с 1 ID ==
