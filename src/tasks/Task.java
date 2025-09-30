@@ -17,38 +17,35 @@ public class Task {
     private Duration duration;
     private LocalDateTime startTime;
 
-    public static final Comparator<Task> BY_START_TIME = new Comparator<Task>() {
-        @Override
-        public int compare(Task o1, Task o2) {
-            // 1. Если startTime null
-            if (o1.getStartTime() == null && o2.getStartTime() == null) {
-                return 0;
-            }
-            if (o1.getStartTime() == null) {
-                return 1;
-            }
-            if (o2.getStartTime() == null) {
-                return -1;
-            }
-            // 2. Если время есть
-            LocalDateTime start1 = o1.getStartTime();
-            LocalDateTime start2 = o2.getStartTime();
-
-            if (start1.isBefore(start2)) {
-                return -1;
-            }
-            if (start1.isAfter(start2)) {
-                return 1;
-            }
-            // 3. Если время одинаково, проверим по Id
-            if (o1.getId() < o2.getId()) {
-                return -1;
-            }
-            if (o1.getId() > o2.getId()) {
-                return 1;
-            }
+    public static final Comparator<Task> BY_START_TIME = (o1, o2) -> {
+        // 1. Если startTime null
+        if (o1.getStartTime() == null && o2.getStartTime() == null) {
             return 0;
         }
+        if (o1.getStartTime() == null) {
+            return 1;
+        }
+        if (o2.getStartTime() == null) {
+            return -1;
+        }
+        // 2. Если время есть
+        LocalDateTime start1 = o1.getStartTime();
+        LocalDateTime start2 = o2.getStartTime();
+
+        if (start1.isBefore(start2)) {
+            return -1;
+        }
+        if (start1.isAfter(start2)) {
+            return 1;
+        }
+        // 3. Если время одинаково, проверим по Id
+        if (o1.getId() < o2.getId()) {
+            return -1;
+        }
+        if (o1.getId() > o2.getId()) {
+            return 1;
+        }
+        return 0;
     };
 
     public Duration getDuration() {
