@@ -56,10 +56,10 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
 
         Task taskCopy = new Task(// Создаю копию задачи, что бы тест на проверку старой версии задачи работал.
-                task.getId(),
-                task.getName(),
-                task.getDescription(),
-                task.getTaskStatus()
+            task.getId(),
+            task.getName(),
+            task.getDescription(),
+            task.getTaskStatus()
         );
 
         Node node = new Node(taskCopy); // Создаем новый узел с задачей, если такой нет.

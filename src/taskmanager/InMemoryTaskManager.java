@@ -24,8 +24,31 @@ public class InMemoryTaskManager implements TaskManager {
 
     private Integer generatorId = 1; // Объявляем переменную для хранения ID
 
+
     public InMemoryTaskManager() {
         this.historyManager = Managers.getDefaultHistory();
+    }
+
+    @Override
+    public boolean checkCrossingTasks(Task t1, Task t2) {
+        if (t1 == null || t2 == null ||
+                t1.getStartTime() == null || t2.getStartTime() == null ||
+                t1.getDuration() == null || t2.getDuration() == null) {
+            return false;
+        }
+        LocalDateTime start1 = t1.getStartTime();
+        LocalDateTime end1 = t1.getEndTime();
+        LocalDateTime start2 = t2.getStartTime();
+        LocalDateTime end2 = t2.getEndTime();
+
+        return start1.isBefore(end2) && start2.isBefore(end1);
+    }
+
+    @Override
+    public boolean checkCrossing(Task newTask){
+        return getPrioritizedTasks().stream()
+            .filter(task -> task.getId() != newTask.getId())
+            .anyMatch(task -> checkCrossingTasks(task, newTask));
     }
 
     @Override
@@ -55,7 +78,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Task> getPrioritizedTasks() {
+    public List<Task> getPrioritizedTasks() { // Получить список приоритетных задач.
         return new ArrayList<>(prioritizedTasks);
     }
 
@@ -86,51 +109,63 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeAllTasks() { // Удаление всех задач Task
-        for (Task task : tasks.values()) {
-            historyManager.remove(task.getId());
-        }
+        tasks.values().stream()
+                .forEach(task -> historyManager.remove(task.getId()));
+
         tasks.clear();
         // Получаем стрим из объектов prioritizedTasks
         Set<Task> removeTasks = prioritizedTasks.stream()
-                .filter(task -> task.getClass() == Task.class) // Проверили, что это Task
-                .collect(Collectors.toSet());
+            .filter(task -> task.getClass() == Task.class) // Проверили, что это Task
+            .collect(Collectors.toSet());
         // Теперь удалили из prioritizedTasks
         prioritizedTasks.removeAll(removeTasks);
     }
 
     @Override
     public void removeAllEpics() { // Удаление всех задач Epic
-        for (Epic epic : epics.values()) {
-            historyManager.remove(epic.getId());
-        }
-        for (SubTask subTask : subtasks.values()) {
-            historyManager.remove(subTask.getId());
-        }
+        epics.values().stream()
+            .forEach(epic ->
+                historyManager.remove(epic.getId())
+            );
+
+        subtasks.values().stream()
+            .forEach(subtask ->
+                historyManager.remove(subtask.getId())
+            );
+
         epics.clear();
         subtasks.clear();
-        // Получаем стрим из объектов prioritizedTasks
-        Set<Task> epicsRemove = prioritizedTasks.stream()
-                .filter(task -> task.getClass() == Epic.class || task instanceof SubTask ) // Фильтруем Эпики
-                .collect(Collectors.toSet()); // И СабТаски
-        // Теперь удалили из prioritizedTasks
-        prioritizedTasks.removeAll(epicsRemove);
+
+        Set<Task> epicsRemove = prioritizedTasks.stream() // Получаем стрим из объектов prioritizedTasks
+            .filter(task -> // Фильтруем Эпики и СабТаски
+                task.getClass() == Epic.class ||
+                task.getClass() == SubTask.class
+            )
+            .collect(Collectors.toSet());
+
+        prioritizedTasks.removeAll(epicsRemove); // Теперь удалили из prioritizedTasks
     }
 
     @Override
     public void removeAllSubTasks() { // Удаление всех задач SubTask
-        for (SubTask subTask : subtasks.values()) {
-            historyManager.remove(subTask.getId());
-        }
+        subtasks.values().stream()
+            .forEach(subTask ->
+                historyManager.remove(subTask.getId())
+            );
+
         subtasks.clear();
-        for (Epic epic : epics.values()) {
-            epic.getSubTasks().clear();
-            updateEpicStatus(epic);
-            updateTimes(epic);
-        }
+
+        epics.values().stream()
+            .forEach(epic -> {
+                epic.getSubTasks().clear();
+                updateEpicStatus(epic);
+                updateTimes(epic);
+            });
+
         // Получаем стрим из объектов prioritizedTasks
         Set<Task> subTasksRemove = prioritizedTasks.stream()
-                .filter(task -> task.getClass() == SubTask.class) // Фильтруем Сабтаски
-                .collect(Collectors.toSet());
+            .filter(task -> task.getClass() == SubTask.class) // Фильтруем Сабтаски
+            .collect(Collectors.toSet());
         // Теперь удалили из prioritizedTasks
         prioritizedTasks.removeAll(subTasksRemove);
     }
@@ -172,6 +207,10 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Такая задача уже существует");
             return null;
         }
+        if(checkCrossing(task)) {
+            System.out.println("Задача пересекается с другой задачей");
+            return null;
+        }
         task.setId(getNextId());
         tasks.put(task.getId(), task);
         prioritizedTasks.add(task);
@@ -196,8 +235,16 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public SubTask createSubTask(SubTask subTask) {
+        if (subTask == null) {
+            System.out.println("Пустой объект");
+            return null;
+        }
         Integer epicId = subTask.getEpicId(); // Получили epicID подзадачи
         if (!epics.containsKey(epicId)) { // если мапа не содержит такой ключ с таким id, null!
+            return null;
+        }
+        if(checkCrossing(subTask)) {
+            System.out.println("СабТаск пересекается с другой задачей");
             return null;
         }
         int newSubTaskId = getNextId();
@@ -225,6 +272,12 @@ public class InMemoryTaskManager implements TaskManager {
             return null;
         }
         prioritizedTasks.remove(oldVerisonTask);
+
+        if (checkCrossing(newTask)) {
+            prioritizedTasks.add(oldVerisonTask);
+            return null;
+        }
+
         tasks.put(id, newTask);
         prioritizedTasks.add(newTask);
 
@@ -246,7 +299,6 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStatus(updateVerison);
         updateTimes(updateVerison);
 
-        prioritizedTasks.remove(updateVerison);
         prioritizedTasks.add(updateVerison);
 
         return updateVerison;
@@ -261,6 +313,11 @@ public class InMemoryTaskManager implements TaskManager {
             return null;
         }
         prioritizedTasks.remove(updateVersion);
+        if(checkCrossing(newSubTask)) {
+            prioritizedTasks.add(updateVersion);
+            System.out.println("СабТаск пересекается с другой задачей.");
+            return null;
+        }
         subtasks.put(id, newSubTask);
         prioritizedTasks.add(newSubTask);
         Epic epic = epics.get(newSubTask.getEpicId());
@@ -287,13 +344,15 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic == null) {
             return null;
         }
-        for (SubTask subTask : subtasks.values()) { // Перебираем подзадачи
-            if (id.equals(subTask.getEpicId())) { // Если пришедший id сравним с id подзадачи
-                subtasks.remove(subTask.getId()); // Удаляем
-                historyManager.remove(subTask.getId()); // Удаление подзадачи из истории
-                prioritizedTasks.remove(subTask);
-            }
-        }
+
+        printSubtask().stream()
+            .filter(subtask -> id.equals(subtask.getEpicId()))
+            .forEach(subtask -> {
+                    subtasks.remove(subtask.getId());
+                    historyManager.remove(subtask.getId());
+                    prioritizedTasks.remove(subtask);
+            });
+
         epics.remove(id); // Удалили эпик задачу
         prioritizedTasks.remove(epic);
         historyManager.remove(id); // Удаление эпика из истории
@@ -308,7 +367,7 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.remove(id); // Удаление подзадачи из истории
             prioritizedTasks.remove(removed);
 
-            Epic epic = epics.get(removed.getEpicId());
+        Epic epic = epics.get(removed.getEpicId());
             if (epic != null) {
                 updateEpicStatus(epic);
                 updateTimes(epic);
@@ -323,13 +382,12 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic == null) {
             return new ArrayList<>();
         }
-        ArrayList<SubTask> result = new ArrayList<>();
-        for (Integer subTaskId : epic.getSubTasks()) {
-            SubTask subTask = subtasks.get(subTaskId);
-            if (subTask != null) {
-                result.add(subTask);
-            }
-        }
+
+        ArrayList<SubTask> result = new ArrayList<>(epic.getSubTasks().stream()
+            .map(subtask -> subtasks.get(subtask))
+            .filter(subtask -> subtask != null)
+            .collect(Collectors.toList()));
+
         return result;
     }
 
