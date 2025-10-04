@@ -45,7 +45,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public boolean checkCrossing(Task newTask){
+    public boolean checkCrossing(Task newTask) {
         return getPrioritizedTasks().stream()
             .filter(task -> task.getId() != newTask.getId())
             .anyMatch(task -> checkCrossingTasks(task, newTask));
@@ -207,7 +207,7 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Такая задача уже существует");
             return null;
         }
-        if(checkCrossing(task)) {
+        if (checkCrossing(task)) {
             System.out.println("Задача пересекается с другой задачей");
             return null;
         }
@@ -243,7 +243,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (!epics.containsKey(epicId)) { // если мапа не содержит такой ключ с таким id, null!
             return null;
         }
-        if(checkCrossing(subTask)) {
+        if (checkCrossing(subTask)) {
             System.out.println("СабТаск пересекается с другой задачей");
             return null;
         }
@@ -289,7 +289,7 @@ public class InMemoryTaskManager implements TaskManager {
         Integer id = newEpic.getId();
 
         Epic updateVerison = epics.get(id);
-        if(updateVerison == null) {
+        if (updateVerison == null) {
             return null;
         }
 
@@ -309,11 +309,11 @@ public class InMemoryTaskManager implements TaskManager {
         Integer id = newSubTask.getId();
 
         SubTask updateVersion = subtasks.get(id);
-        if(updateVersion == null) {
+        if (updateVersion == null) {
             return null;
         }
         prioritizedTasks.remove(updateVersion);
-        if(checkCrossing(newSubTask)) {
+        if (checkCrossing(newSubTask)) {
             prioritizedTasks.add(updateVersion);
             System.out.println("СабТаск пересекается с другой задачей.");
             return null;
