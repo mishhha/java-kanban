@@ -174,7 +174,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             bw.newLine();
 
             allTasks.stream()
-                .forEach( task -> {
+                .forEach(task -> {
                     try {
                         bw.write(CsvTaskHelper.parseToString(task));
                         bw.newLine();
