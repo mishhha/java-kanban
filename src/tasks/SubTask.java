@@ -1,7 +1,7 @@
 package tasks;
 
-import taskManager.TaskStatus;
-import taskManager.TaskType;
+import taskmanager.TaskStatus;
+import taskmanager.TaskType;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

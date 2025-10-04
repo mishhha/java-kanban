@@ -1,6 +1,6 @@
-import taskManager.FileBackedTaskManager;
-import taskManager.TaskManager;
-import taskManager.Managers;
+import taskmanager.FileBackedTaskManager;
+import taskmanager.TaskManager;
+import taskmanager.Managers;
 
 import java.io.File;
 import java.io.IOException;

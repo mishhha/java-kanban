@@ -2,7 +2,7 @@ package tasks;
 
 import org.junit.jupiter.api.Test;
 
-import taskManager.*;
+import taskmanager.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
