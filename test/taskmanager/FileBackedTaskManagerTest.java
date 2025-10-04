@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -53,6 +54,11 @@ public class FileBackedTaskManagerTest {
             bw.write("1,TASK,Test,NEW,Description,");
             bw.newLine();
         }
+
+
+        System.out.println("Файл создан: " + tempFile.getAbsolutePath());
+        List<String> lines = Files.readAllLines(tempFile.toPath());
+        System.out.println("Содержимое файла: " + lines);
 
         assertDoesNotThrow(
             () -> FileBackedTaskManager.loadFromFile(tempFile),

@@ -22,6 +22,11 @@ public class CsvTaskHelper {
         line.append(task.getDescription());
         line.append(",");
 
+        if (task instanceof SubTask subTask) {
+            line.append(subTask.getEpicId());
+        }
+        line.append(",");
+
         if (task.getStartTime() != null) {
             line.append(task.getStartTime().toString());
         }
@@ -32,16 +37,21 @@ public class CsvTaskHelper {
         }
         line.append(",");
 
-        if (task instanceof SubTask subTask) {
-            line.append(subTask.getEpicId());
-        }
         return line.toString();
     }
 
     public static Task parseFromString(String line) {
-        String[] massiveTransform = line.split(",");
+        if (line == null || line.trim().isEmpty()) {
+            return null;
+        }
 
-        int id = Integer.parseInt(massiveTransform[0]);
+        String[] massiveTransform = line.split(",", -1);
+
+        if (massiveTransform.length < 8) {
+            return null;
+        }
+
+        int id = Integer.parseInt(massiveTransform[0].trim());
         String type = massiveTransform[1].trim();
         String name = massiveTransform[2].trim();
         String status = massiveTransform[3].trim();
@@ -51,15 +61,15 @@ public class CsvTaskHelper {
         LocalDateTime startTime = null;
         Duration duration = null;
 
-        if (massiveTransform.length > 5 && !massiveTransform[5].trim().isEmpty()) {
-            epicIdSub = Integer.parseInt(massiveTransform[5]);
+        if (!massiveTransform[5].trim().isEmpty()) {
+            epicIdSub = Integer.parseInt(massiveTransform[5].trim());
         }
 
-        if (massiveTransform.length > 6 && !massiveTransform[6].trim().isEmpty()) {
+        if (!massiveTransform[6].trim().isEmpty()) {
             startTime = LocalDateTime.parse(massiveTransform[6].trim());
         }
 
-        if (massiveTransform.length > 7 && !massiveTransform[7].trim().isEmpty()) {
+        if (!massiveTransform[7].trim().isEmpty()) {
             long minutes = Long.parseLong(massiveTransform[7].trim());
             duration = Duration.ofMinutes(minutes);
         }
