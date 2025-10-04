@@ -1,4 +1,4 @@
-package taskmanager;
+package taskManager;
 
 public enum TaskType {
     TASK, EPIC, SUBTASK

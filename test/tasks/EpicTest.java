@@ -2,7 +2,7 @@ package tasks;
 
 import org.junit.jupiter.api.Test;
 
-import taskmanager.*;
+import taskManager.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -15,6 +15,93 @@ import static org.junit.jupiter.api.Assertions.*;
 class EpicTest {
 
     TaskManager manager = Managers.getDefault();
+
+
+    // Тесты статусов SubTask
+
+    @Test // Все статусы NEW
+    void epicShouldBeNewIfAllSubtasksAreNew() {
+        Epic epic1 = new Epic("Задача 1", "Описание 1");
+        Epic epic2 = new Epic("Задача 2", "Описание 2");
+        manager.createEpic(epic1);
+        manager.createEpic(epic2);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", epic1.getId());
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", epic2.getId());
+        manager.createSubTask(subTask1);
+        manager.createSubTask(subTask2);
+
+
+        assertEquals(TaskStatus.NEW, subTask1.getTaskStatus());
+        assertEquals(TaskStatus.NEW, subTask2.getTaskStatus());
+    }
+
+    @Test // Все статусы Done
+    void epicShouldBeDoneIfAllSubtasksAreDone() {
+        Epic epic1 = new Epic("Задача 1", "Описание 1");
+        Epic epic2 = new Epic("Задача 2", "Описание 2");
+
+        manager.createEpic(epic1);
+        manager.createEpic(epic2);
+
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", epic1.getId());
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", epic2.getId());
+
+        manager.createSubTask(subTask1);
+        manager.createSubTask(subTask2);
+
+        subTask1.setTaskStatus(TaskStatus.DONE);
+        manager.updateSubtask(subTask1);
+
+        subTask2.setTaskStatus(TaskStatus.DONE);
+        manager.updateSubtask(subTask2);
+
+        assertEquals(TaskStatus.DONE, subTask1.getTaskStatus());
+        assertEquals(TaskStatus.DONE, subTask2.getTaskStatus());
+    }
+
+    @Test // Статус NEW и Done
+    void epicShouldBeProgressIfAllSubtasksAreNewAndDone() {
+        Epic epic1 = new Epic("Задача 1", "Описание 1");
+
+        manager.createEpic(epic1);
+
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", epic1.getId());
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", epic1.getId());
+
+        manager.createSubTask(subTask1);
+        manager.createSubTask(subTask2);
+
+        subTask2.setTaskStatus(TaskStatus.DONE);
+        manager.updateSubtask(subTask2);
+
+        assertEquals(TaskStatus.NEW, subTask1.getTaskStatus());
+        assertEquals(TaskStatus.DONE, subTask2.getTaskStatus());
+        assertEquals(TaskStatus.IN_PROGRESS, epic1.getTaskStatus());
+    }
+
+    @Test // Статусы IN_PROGRESS
+    void epicShouldBeProgressIfAllSubtasksAreProgress() {
+        Epic epic1 = new Epic("Задача 1", "Описание 1");
+
+        manager.createEpic(epic1);
+
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", epic1.getId());
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", epic1.getId());
+
+        manager.createSubTask(subTask1);
+        manager.createSubTask(subTask2);
+
+        subTask1.setTaskStatus(TaskStatus.IN_PROGRESS);
+        manager.updateSubtask(subTask1);
+
+        subTask2.setTaskStatus(TaskStatus.IN_PROGRESS);
+        manager.updateSubtask(subTask2);
+
+        assertEquals(TaskStatus.IN_PROGRESS, subTask1.getTaskStatus());
+        assertEquals(TaskStatus.IN_PROGRESS, subTask2.getTaskStatus());
+        assertEquals(TaskStatus.IN_PROGRESS, epic1.getTaskStatus());
+    }
+
 
     // Тесты для prioritizedTask
 

@@ -1,4 +1,4 @@
-package taskmanager;
+package taskManager;
 
 import tasks.Task;
 
@@ -45,7 +45,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public void add(Task task) { // Добавляем новый узел в начало истории. Сложность амортиз. O(1)
+    public void add(Task task) { // Добавляем новый узел в конец истории. Сложность амортиз. O(1)
         if (task == null) { // Если задачи нет, прерываем.
             return;
         }
@@ -74,7 +74,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
 
         history.put(id, node); // Добавили в историю новый узел
-
     }
 
     @Override

@@ -1,4 +1,4 @@
-package taskmanager;
+package taskManager;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
@@ -173,10 +173,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             bw.write("id,type,name,status,description,epic");
             bw.newLine();
 
-            for (Task task : allTasks) {
-                bw.write(CsvTaskHelper.parseToString(task));
-                bw.newLine();
-            }
+            allTasks.stream()
+                .forEach( task -> {
+                    try {
+                        bw.write(CsvTaskHelper.parseToString(task));
+                        bw.newLine();
+                    } catch (IOException e) {
+                        throw new RuntimeException("Ошибка записи в файл", e);
+                    }
+                });
         } catch (IOException e) {
             throw new ManagerSaveException("Не удалось сохранить данные в файл." + e.getMessage());
         }
