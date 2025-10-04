@@ -22,7 +22,7 @@ public class CsvTaskHelper {
         line.append(task.getDescription());
         line.append(",");
 
-        if(task.getStartTime() != null) {
+        if (task.getStartTime() != null) {
             line.append(task.getStartTime().toString());
         }
         line.append(",");
