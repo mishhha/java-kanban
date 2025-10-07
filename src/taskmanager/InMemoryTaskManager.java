@@ -255,7 +255,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         if (checkCrossing(newTask)) {
             prioritizedTasks.add(oldVerisonTask);
-            return null;
+            throw new ManagerSaveException("Не удалось обновить задачу: время пересекается с другой задачей");
         }
 
         tasks.put(id, newTask);
@@ -293,8 +293,7 @@ public class InMemoryTaskManager implements TaskManager {
         prioritizedTasks.remove(updateVersion);
         if (checkCrossing(newSubTask)) {
             prioritizedTasks.add(updateVersion);
-            System.out.println("СабТаск пересекается с другой задачей.");
-            return null;
+            throw new ManagerSaveException("Не удалось обновить subTask: время пересекается с другой задачей");
         }
         subtasks.put(id, newSubTask);
         prioritizedTasks.add(newSubTask);
