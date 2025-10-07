@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
-    Path path;
+    private final Path path;
 
     public FileBackedTaskManager(Path path) {
         this.path = path;
