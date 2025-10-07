@@ -29,7 +29,6 @@ public class InMemoryTaskManager implements TaskManager {
         this.historyManager = Managers.getDefaultHistory();
     }
 
-    @Override
     public boolean checkCrossingTasks(Task t1, Task t2) {
         if (t1 == null || t2 == null ||
                 t1.getStartTime() == null || t2.getStartTime() == null ||
@@ -44,14 +43,12 @@ public class InMemoryTaskManager implements TaskManager {
         return start1.isBefore(end2) && start2.isBefore(end1);
     }
 
-    @Override
     public boolean checkCrossing(Task newTask) {
         return getPrioritizedTasks().stream()
             .filter(task -> task.getId() != newTask.getId())
             .anyMatch(task -> checkCrossingTasks(task, newTask));
     }
 
-    @Override
     public void updateTimes(Epic epic) { // Реализация метода поиска и суммирования времени подзадач.
         List<SubTask> epicSubTasks = getSubTasksByEpic(epic.getId());
 

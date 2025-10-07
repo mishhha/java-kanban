@@ -9,13 +9,7 @@ import java.util.List;
 
 public interface TaskManager {
 
-    boolean checkCrossingTasks(Task t1, Task t2);
-
-    boolean checkCrossing(Task newTask);
-
     List<Task> getPrioritizedTasks();
-
-    void updateTimes(Epic epic);
 
     Integer getNextId(); // Метод для генерации след. Id
 
