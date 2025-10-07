@@ -18,21 +18,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public ArrayList<Task> printTasks() { // Печать всех задач Task
-        return new ArrayList<>(super.printTasks()); // Так как поле private в IMTM, получаем через метод.
-    }
-
-    @Override
-    public ArrayList<Epic> printEpics() { // Печать всех задач Epic
-        return new ArrayList<>(super.printEpics());
-    }
-
-    @Override
-    public ArrayList<SubTask> printSubtask() { // Печать всех задач SubTask
-        return new ArrayList<>(super.printSubtask());
-    }
-
-    @Override
     public Task getByIdTask(Integer id) { // Получить Task по Id
         Task getTask = super.getByIdTask(id); // Пришел null или задача.
             if (getTask != null) { // Если не null сохраняем.
