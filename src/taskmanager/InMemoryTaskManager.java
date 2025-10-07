@@ -111,11 +111,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         tasks.clear();
         // Получаем стрим из объектов prioritizedTasks
-        Set<Task> removeTasks = prioritizedTasks.stream()
-            .filter(task -> task.getClass() == Task.class) // Проверили, что это Task
-            .collect(Collectors.toSet());
-        // Теперь удалили из prioritizedTasks
-        prioritizedTasks.removeAll(removeTasks);
+        prioritizedTasks.removeIf(task -> task.getClass() == Task.class);
     }
 
     @Override
@@ -133,14 +129,7 @@ public class InMemoryTaskManager implements TaskManager {
         epics.clear();
         subtasks.clear();
 
-        Set<Task> epicsRemove = prioritizedTasks.stream() // Получаем стрим из объектов prioritizedTasks
-            .filter(task -> // Фильтруем Эпики и СабТаски
-                task.getClass() == Epic.class ||
-                task.getClass() == SubTask.class
-            )
-            .collect(Collectors.toSet());
-
-        prioritizedTasks.removeAll(epicsRemove); // Теперь удалили из prioritizedTasks
+        prioritizedTasks.removeIf(task -> task.getClass() == Epic.class || task.getClass() == SubTask.class);
     }
 
     @Override
@@ -159,12 +148,7 @@ public class InMemoryTaskManager implements TaskManager {
                 updateTimes(epic);
             });
 
-        // Получаем стрим из объектов prioritizedTasks
-        Set<Task> subTasksRemove = prioritizedTasks.stream()
-            .filter(task -> task.getClass() == SubTask.class) // Фильтруем Сабтаски
-            .collect(Collectors.toSet());
-        // Теперь удалили из prioritizedTasks
-        prioritizedTasks.removeAll(subTasksRemove);
+        prioritizedTasks.removeIf(task -> task.getClass() == SubTask.class);
     }
 
     @Override
