@@ -1,6 +1,10 @@
 import taskmanager.FileBackedTaskManager;
 import taskmanager.TaskManager;
 import taskmanager.Managers;
+import taskmanager.TaskStatus;
+import tasks.Epic;
+import tasks.SubTask;
+import tasks.Task;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,10 +17,10 @@ public class Main {
         FileBackedTaskManager fileBackedTaskManager = Managers.getDefaultBacked(fileToBackup.toPath());
 
 
-
+/*
         // Проверяем функциональность Спринта №7
 
-    /*  System.out.println("--------".repeat(10));
+     System.out.println("--------".repeat(10));
         System.out.println("Проверяем функциональность Спринта №7 \n");
 
         System.out.println("Создаем 3 задачи: Task, Epic, Subtask \n");
@@ -47,7 +51,7 @@ public class Main {
         System.out.println(loadBeckUpFile.printEpics());
         System.out.println(loadBeckUpFile.printSubtask());
 
-    /*
+
     // Тесты ФЗ - Спринт 4
 
         // 1. Создаем две обычные задачи
@@ -153,19 +157,19 @@ public class Main {
 
         System.out.println("Задачи:");
         System.out.println();
-        for (Task task : manager.printTasks()) {
-            System.out.println(task);
+        for (Task task11 : manager.printTasks()) {
+            System.out.println(task11);
         }
 
         System.out.println();
 
         System.out.println("Эпики:");
         System.out.println();
-        for (Task epic : manager.printEpics()) {
-            System.out.println(epic);
+        for (Task epic1 : manager.printEpics()) {
+            System.out.println(epic1);
 
-            for (Task task : manager.getSubTasksByEpic(epic.getId())) {
-                System.out.println("--> " + task);
+            for (Task task12 : manager.getSubTasksByEpic(epic.getId())) {
+                System.out.println("--> " + task12);
             }
         }
         System.out.println();
@@ -179,7 +183,7 @@ public class Main {
 
         System.out.println("История:");
         System.out.println();
-        for (Task task : manager.getHistory()) {
+        for (Task task11 : manager.getHistory()) {
             System.out.println(task);
         }
 
@@ -192,14 +196,5 @@ public class Main {
         System.out.println(manager.printSubtask() + "\n");
         System.out.println("Задач нет, пусто. \n");
 */
-
-
-
-
-
-
-
-
-
     }
 }

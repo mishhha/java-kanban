@@ -145,7 +145,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
 // Новая функциональность Спринта №7
 
-    public void save() {
+    private void save() {
         ArrayList<Task> allTasks = new ArrayList<>(printTasks());
         allTasks.addAll(printEpics());
         allTasks.addAll(printSubtask());

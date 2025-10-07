@@ -25,9 +25,8 @@ public class FileBackedTaskManagerTest {
             FileBackedTaskManager manager = Managers.getDefaultBacked(backup.toPath());
 
             Task task = new Task("Задача", "Описание", TaskStatus.NEW);
-            manager.createTask(task);
 
-            assertDoesNotThrow(() -> manager.save(), "Сохранение должно пройти без ошибок");
+            assertDoesNotThrow(() -> manager.createTask(task), "Сохранение должно пройти без ошибок");
 
         } catch (IOException e) {
             System.out.println(e.getMessage() + "Произошла ошибка записи.");
@@ -40,7 +39,9 @@ public class FileBackedTaskManagerTest {
         Path invalidPath = Paths.get("/kuda-to/suda.csv");
         FileBackedTaskManager manager = Managers.getDefaultBacked(invalidPath);
 
-        assertThrows(ManagerSaveException.class, () -> manager.save(),
+        Task task = new Task("Задача", "Описание", TaskStatus.NEW);
+
+        assertThrows(ManagerSaveException.class, () -> manager.createTask(task),
             "Сохранение должно вызывать исключение"
         );
     }
