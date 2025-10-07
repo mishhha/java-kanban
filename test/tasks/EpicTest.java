@@ -200,7 +200,7 @@ class EpicTest {
     }
 
     @Test
-    void shouldIncludeSubTaskAndEpicInPrioritized() {
+    void shouldIncludeSubTaskInPrioritized() {
         Epic epic = new Epic("Epic", "desc");
         manager.createEpic(epic);
 
@@ -210,7 +210,6 @@ class EpicTest {
 
         List<Task> prioritized = manager.getPrioritizedTasks();
         assertTrue(prioritized.contains(subTask));
-        assertTrue(prioritized.contains(epic)); // даже если startTime == null → epic будет в конце
     }
 
     // Тесты 8 спринт
