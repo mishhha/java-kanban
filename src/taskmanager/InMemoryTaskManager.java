@@ -129,7 +129,7 @@ public class InMemoryTaskManager implements TaskManager {
         epics.clear();
         subtasks.clear();
 
-        prioritizedTasks.removeIf(task -> task.getClass() == Epic.class || task.getClass() == SubTask.class);
+        prioritizedTasks.removeIf(task -> task.getClass() == SubTask.class);
     }
 
     @Override
@@ -210,7 +210,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
         epic.setId(getNextId());
         epics.put(epic.getId(), epic);
-        prioritizedTasks.add(epic);
         return epic;
     }
 
@@ -280,8 +279,6 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStatus(updateVerison);
         updateTimes(updateVerison);
 
-        prioritizedTasks.add(updateVerison);
-
         return updateVerison;
     }
 
@@ -335,7 +332,6 @@ public class InMemoryTaskManager implements TaskManager {
             });
 
         epics.remove(id); // Удалили эпик задачу
-        prioritizedTasks.remove(epic);
         historyManager.remove(id); // Удаление эпика из истории
 
         return epic;
