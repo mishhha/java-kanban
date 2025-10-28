@@ -1,4 +1,4 @@
-import taskmanager.FileBackedTaskManager;
+/* import taskmanager.FileBackedTaskManager;
 import taskmanager.TaskManager;
 import taskmanager.Managers;
 
@@ -6,14 +6,14 @@ import java.io.File;
 import java.io.IOException;
 
 
-public class Main {
+ public class Main {
     public static void main(String[] args) throws IOException {
         TaskManager manager = Managers.getDefault();
         File fileToBackup = File.createTempFile("backup-", ".csv");
         FileBackedTaskManager fileBackedTaskManager = Managers.getDefaultBacked(fileToBackup.toPath());
 
 
-/*
+
         // Проверяем функциональность Спринта №7
 
      System.out.println("--------".repeat(10));
@@ -191,6 +191,7 @@ public class Main {
         System.out.println(manager.printEpics());
         System.out.println(manager.printSubtask() + "\n");
         System.out.println("Задач нет, пусто. \n");
-*/
+
     }
 }
+*/
