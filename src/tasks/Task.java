@@ -116,8 +116,8 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "name='" + name + '\'' +
+        return  getClass().getSimpleName() + '{' +
+            "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", id=" + id +
                 ", taskStatus=" + taskStatus +
