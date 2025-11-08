@@ -30,7 +30,8 @@ public class InMemoryTaskManagerTest {
         LocalDateTime localDateTimeTask2 = LocalDateTime.of(2025, 9, 4, 10, 0);
         task2.setStartTime(localDateTimeTask2);
         task2.setDuration(Duration.ofMinutes(30));
-        manager.createTask(task2);
+
+        assertThrows(CrossingException.class, () -> manager.createTask(task2));
 
         List<Task> tasks = manager.printTasks();
 

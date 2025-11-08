@@ -342,10 +342,11 @@ class EpicTest {
         SubTask subTask = new SubTask("Подзадача", "Описание", 999999); // Нет эпика
 
         // Пытаемся создать подзадачу
-        SubTask result = manager.createSubTask(subTask);
+        assertThrows(NotFoundException.class, () -> manager.createSubTask(subTask));
+        List<SubTask> result = manager.printSubtask();
 
         // Проверяем, что подзадача НЕ создана
-        assertNull(result, "Подзадача не должна создаваться для несуществующего эпика");
+        assertEquals(0, result.size(), "Подзадача не должна создаваться для несуществующего эпика");
     }
 
     @Test // Проверка, что утилитарный класс всегда возвращает проинициализированные и готовые к работе +
