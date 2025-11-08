@@ -1,10 +1,45 @@
+import taskmanager.HttpTaskServer;
+import taskmanager.Managers;
+import taskmanager.TaskManager;
+import taskmanager.TaskStatus;
+import tasks.Epic;
+import tasks.SubTask;
+import tasks.Task;
+
+import java.io.IOException;
+
+public class Main {
+
+    public static void main(String[] args) throws IOException {
+        TaskManager manager = Managers.getDefault();
+
+        HttpTaskServer httpTaskServer = new HttpTaskServer(manager);
+        httpTaskServer.startHttpServer();
+
+        Task task = new Task("Задача", "Описание", TaskStatus.NEW);
+        Task task1 = new Task("Задача1", "Описание1", TaskStatus.NEW);
+        manager.createTask(task);
+        manager.createTask(task1);
+
+        Epic epic = new Epic("Эпик задача", "Эпик Описание");
+        manager.createEpic(epic);
+
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", epic.getId());
+        manager.createSubTask(subTask);
+        SubTask subTask1 = new SubTask("Подзадача1", "Описание подзадачи1", epic.getId());
+        manager.createSubTask(subTask1);
+
+        httpTaskServer.stopHttpServer();
+    }
+}
+
+
+
 /* import taskmanager.FileBackedTaskManager;
 import taskmanager.TaskManager;
 import taskmanager.Managers;
 
 import java.io.File;
-import java.io.IOException;
-
 
  public class Main {
     public static void main(String[] args) throws IOException {

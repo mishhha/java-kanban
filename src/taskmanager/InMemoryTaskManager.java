@@ -152,45 +152,45 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task getByIdTask(Integer id) { // Получить Task по Id
+    public Task getByIdTask(Integer id) throws NotFoundException { // Получить Task по Id
         Task task = tasks.get(id);
-        if (task != null) {
-            historyManager.add(task);
+        if (task == null) {
+            throw new NotFoundException("Такой задачи нет.");
         }
+        historyManager.add(task);
         return task;
     }
 
     @Override
     public Epic getByIdEpic(Integer id) { // Получить Epic по Id
         Epic epic = epics.get(id);
-        if (epic != null) {
-            historyManager.add(epic);
+        if (epic == null) {
+            throw new NotFoundException("Такой задачи нет.");
         }
+        historyManager.add(epic);
         return epic;
     }
 
     @Override
     public SubTask getByIdSubtask(Integer id) { // Получить Subtask по Id
         SubTask subtask = subtasks.get(id);
-        if (subtask != null) {
-            historyManager.add(subtask);
+        if (subtask == null) {
+            throw new NotFoundException("Такой задачи нет.");
         }
+        historyManager.add(subtask);
         return subtask;
     }
 
     @Override
-    public Task createTask(Task task) { // К Task задаче добавили ID и добавили ее по ID в Map, вернули задачу.
+    public Task createTask(Task task) throws NotFoundException { // К Task задаче добавили ID и добавили ее по ID в Map, вернули задачу.
         if (task == null) {
-            System.out.println("Пустой объект");
-            return null;
+            throw new NotFoundException("Передан пустой объект.");
         }
         if (tasks.containsValue(task)) {
-            System.out.println("Такая задача уже существует");
-            return null;
+            throw new NotFoundException("Такая задача уже существует.");
         }
         if (checkCrossing(task)) {
-            System.out.println("Задача пересекается с другой задачей");
-            return null;
+            throw new CrossingException("Задача пересекается с другой задачей.");
         }
         task.setId(getNextId());
         tasks.put(task.getId(), task);
@@ -201,12 +201,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic createEpic(Epic epic) {
         if (epic == null) {
-            System.out.println("Пустой объект");
-            return null;
+            throw new NotFoundException("Передан пустой объект.");
         }
         if (epics.containsValue(epic)) {
-            System.out.println("Такой эпик уже существует");
-            return null;
+            throw new NotFoundException("Такая задача уже существует.");
         }
         epic.setId(getNextId());
         epics.put(epic.getId(), epic);
@@ -216,16 +214,14 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public SubTask createSubTask(SubTask subTask) {
         if (subTask == null) {
-            System.out.println("Пустой объект");
-            return null;
+            throw new NotFoundException("Передан пустой объект.");
         }
         Integer epicId = subTask.getEpicId(); // Получили epicID подзадачи
         if (!epics.containsKey(epicId)) { // если мапа не содержит такой ключ с таким id, null!
-            return null;
+            throw new NotFoundException("Такого эпика не существует.");
         }
         if (checkCrossing(subTask)) {
-            System.out.println("СабТаск пересекается с другой задачей");
-            return null;
+            throw new CrossingException("СабТаск пересекается с другой задачей");
         }
         int newSubTaskId = getNextId();
         if (newSubTaskId == epicId) { // Проверка на самоссылку
@@ -249,13 +245,13 @@ public class InMemoryTaskManager implements TaskManager {
 
         Task oldVerisonTask = tasks.get(id);
         if (oldVerisonTask == null) {
-            return null;
+            throw new NotFoundException("Задача не найдена");
         }
         prioritizedTasks.remove(oldVerisonTask);
 
         if (checkCrossing(newTask)) {
             prioritizedTasks.add(oldVerisonTask);
-            throw new ManagerSaveException("Не удалось обновить задачу: время пересекается с другой задачей");
+            throw new CrossingException("Не удалось обновить задачу: время пересекается с другой задачей");
         }
 
         tasks.put(id, newTask);
@@ -270,7 +266,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         Epic updateVerison = epics.get(id);
         if (updateVerison == null) {
-            return null;
+            throw new NotFoundException("Задача не найдена");
         }
 
         updateVerison.setName(newEpic.getName());
@@ -288,7 +284,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         SubTask updateVersion = subtasks.get(id);
         if (updateVersion == null) {
-            return null;
+            throw new NotFoundException("Задача не найдена");
         }
         prioritizedTasks.remove(updateVersion);
         if (checkCrossing(newSubTask)) {
@@ -308,10 +304,11 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task deleteTask(Integer id) { // Принимаем ID объекта, удаляем и возвращаем удаленный объект.
         Task removed = tasks.remove(id);
-        if (removed != null) {
-            historyManager.remove(id); // Удаление из истории
-            prioritizedTasks.remove(removed);
+        if (removed == null) {
+            throw new NotFoundException("Задача не найдена.");
         }
+        historyManager.remove(id); // Удаление из истории
+        prioritizedTasks.remove(removed);
         return removed;
     }
 
@@ -319,7 +316,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Epic deleteEpic(Integer id) {
         Epic epic = epics.get(id); // Получаем задачу из мап по Id
         if (epic == null) {
-            return null;
+            throw new NotFoundException("Задача не найдена");
         }
 
         printSubtask().stream()
@@ -339,16 +336,18 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public SubTask deleteSubtaskById(Integer id) {
         SubTask removed = subtasks.remove(id);
-        if (removed != null) {
-            historyManager.remove(id); // Удаление подзадачи из истории
-            prioritizedTasks.remove(removed);
+        if (removed == null) {
+            throw new NotFoundException("Задача не найдена");
+        }
+        historyManager.remove(id); // Удаление подзадачи из истории
+        prioritizedTasks.remove(removed);
 
         Epic epic = epics.get(removed.getEpicId());
             if (epic != null) {
                 updateEpicStatus(epic);
                 updateTimes(epic);
             }
-        }
+
         return removed;
     }
 
