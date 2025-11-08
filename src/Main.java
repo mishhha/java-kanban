@@ -1,4 +1,3 @@
-import com.sun.net.httpserver.HttpServer;
 import taskmanager.HttpTaskServer;
 import taskmanager.Managers;
 import taskmanager.TaskManager;
@@ -18,9 +17,10 @@ public class Main {
         httpTaskServer.startHttpServer();
 
         Task task = new Task("Задача", "Описание", TaskStatus.NEW);
-        Task task1 = new Task("Задача1", "Описание1", TaskStatus.NEW);
         manager.createTask(task);
+        Task task1 = new Task("Задача1", "Описание1", TaskStatus.NEW);
         manager.createTask(task1);
+
 
         Epic epic = new Epic("Эпик задача", "Эпик Описание");
         manager.createEpic(epic);
@@ -30,7 +30,7 @@ public class Main {
         SubTask subTask1 = new SubTask("Подзадача1", "Описание подзадачи1", epic.getId());
         manager.createSubTask(subTask1);
 
-        httpTaskServer.stopHttpServer();
+
     }
 }
 

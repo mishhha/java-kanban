@@ -1,14 +1,13 @@
 package httptaskmanagertaskstest;
 
 import com.google.gson.Gson;
-import com.sun.net.httpserver.HttpServer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
-import taskmanager.HttpTaskServer;
-import taskmanager.InMemoryTaskManager;
-import taskmanager.TaskManager;
-import taskmanager.TaskStatus;
+import taskmanager.*;
+import adapter.DurationAdapter;
+import adapter.LocalDateTimeAdapter;
+import handler.*;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
@@ -23,8 +22,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HttpTaskManagerEpicTest {
-    TaskManager manager = new InMemoryTaskManager();
+    TaskManager manager = Managers.getDefault();
     HttpTaskServer taskServer = new HttpTaskServer(manager);
+
     Gson gson = HttpTaskServer.getGson();
 
     public HttpTaskManagerEpicTest() throws IOException {
