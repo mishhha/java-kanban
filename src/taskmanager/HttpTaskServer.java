@@ -52,7 +52,7 @@ public class HttpTaskServer {
         httpServer.stop(5);
     }
 
-    public static Gson getGson(){
+    public static Gson getGson() {
         return gson;
     }
 
