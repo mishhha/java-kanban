@@ -2,10 +2,8 @@ package handler;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import taskmanager.BaseHttpHandler;
 import taskmanager.HttpTaskServer;
-import taskmanager.Managers;
 import taskmanager.TaskManager;
 import tasks.Task;
 
