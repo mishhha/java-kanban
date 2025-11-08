@@ -29,6 +29,9 @@ public class HttpTaskManagerHistoryTest {
     HttpTaskServer taskServer = new HttpTaskServer(manager);
     Gson gson = HttpTaskServer.getGson();
 
+    public HttpTaskManagerHistoryTest() throws IOException {
+    }
+
     static class TaskHistoryTypeToken extends TypeToken<List<Task>> {
     }
 

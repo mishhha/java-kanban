@@ -1,6 +1,7 @@
 package httptaskmanagertaskstest;
 
 import com.google.gson.Gson;
+import com.sun.net.httpserver.HttpServer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
@@ -22,10 +23,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HttpTaskManagerEpicTest {
-
     TaskManager manager = new InMemoryTaskManager();
     HttpTaskServer taskServer = new HttpTaskServer(manager);
     Gson gson = HttpTaskServer.getGson();
+
+    public HttpTaskManagerEpicTest() throws IOException {
+    }
 
     @BeforeEach
     public void setUp() throws IOException {

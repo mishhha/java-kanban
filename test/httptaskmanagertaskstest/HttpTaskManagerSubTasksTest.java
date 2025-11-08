@@ -27,6 +27,9 @@ public class HttpTaskManagerSubTasksTest {
     HttpTaskServer taskServer = new HttpTaskServer(manager);
     Gson gson = HttpTaskServer.getGson();
 
+    public HttpTaskManagerSubTasksTest() throws IOException {
+    }
+
     @BeforeEach
     public void setUp() throws IOException {
         manager.removeAllTasks();

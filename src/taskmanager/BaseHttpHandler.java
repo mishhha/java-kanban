@@ -34,6 +34,8 @@ public class BaseHttpHandler {
         h.sendResponseHeaders(406, errorBytes.length);
         try (OutputStream os = h.getResponseBody()) {
             os.write(errorBytes);
+        } finally {
+            h.close();
         }
     }
 
@@ -44,6 +46,8 @@ public class BaseHttpHandler {
         h.sendResponseHeaders(400, errorBytes.length);
         try (OutputStream os = h.getResponseBody()) {
             os.write(errorBytes);
+        } finally {
+            h.close();
         }
     }
 
@@ -54,6 +58,8 @@ public class BaseHttpHandler {
         h.sendResponseHeaders(400, errorBytes.length);
         try (OutputStream os = h.getResponseBody()) {
             os.write(errorBytes);
+        } finally {
+            h.close();
         }
     }
 
@@ -63,6 +69,8 @@ public class BaseHttpHandler {
         h.sendResponseHeaders(201, done.length);
         try (OutputStream os = h.getResponseBody()) {
             os.write(done);
+        } finally {
+            h.close();
         }
     }
 

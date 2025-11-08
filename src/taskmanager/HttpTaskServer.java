@@ -22,10 +22,10 @@ import tasks.Task;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class HttpTaskServer {
-    TaskManager manager;
-    HttpServer httpServer;
+    private final TaskManager manager;
+    private final HttpServer httpServer = HttpServer.create(new InetSocketAddress(8080),0);
 
-    public HttpTaskServer(TaskManager manager) {
+    public HttpTaskServer(TaskManager manager) throws IOException {
         this.manager = manager;
     }
 
@@ -35,11 +35,8 @@ public class HttpTaskServer {
         .create();
 
     public void startHttpServer() throws IOException {
-        httpServer = HttpServer.create();
-        httpServer.bind(new InetSocketAddress(8080), 0);
         httpServer.start();
         System.out.println("Сервер запущен на порту: 8080");
-
 
         httpServer.createContext("/tasks", new TaskHandler());
         httpServer.createContext("/subtasks", new SubTaskHandler());

@@ -29,6 +29,9 @@ public class HttpTaskManagerPrioritizedTest {
     HttpTaskServer taskServer = new HttpTaskServer(manager);
     Gson gson = HttpTaskServer.getGson();
 
+    public HttpTaskManagerPrioritizedTest() throws IOException {
+    }
+
     static class TaskHistoryTypeToken extends TypeToken<List<Task>> {
     }
 
